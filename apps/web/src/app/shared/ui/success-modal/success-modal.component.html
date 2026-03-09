@@ -1,0 +1,17 @@
+<div class="success-overlay" role="dialog" aria-modal="true" aria-labelledby="success-title">
+  <div class="success-card">
+
+    <div class="success-icon" [style.background]="iconBg">
+      {{ icon }}
+    </div>
+
+    <div id="success-title" class="success-title">{{ title }}</div>
+
+    <p class="success-sub" *ngIf="message">{{ message }}</p>
+
+    <button class="auth-btn auth-btn-primary" (click)="proceed.emit()">
+      {{ actionLabel }}
+    </button>
+
+  </div>
+</div>

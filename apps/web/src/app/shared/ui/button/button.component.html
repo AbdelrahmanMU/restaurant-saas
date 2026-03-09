@@ -1,0 +1,12 @@
+<button
+  [type]="type"
+  class="btn"
+  [class.primary]="variant === 'primary'"
+  [class.secondary]="variant === 'secondary'"
+  [class.ghost]="variant === 'ghost'"
+  [class.full-width]="fullWidth"
+  [disabled]="disabled || loading"
+>
+  <ui-loading-spinner *ngIf="loading" size="sm" [color]="variant === 'primary' ? 'white' : 'primary'"></ui-loading-spinner>
+  <ng-content *ngIf="!loading"></ng-content>
+</button>

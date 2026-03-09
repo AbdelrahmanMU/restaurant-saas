@@ -61,30 +61,45 @@ Customer places order
 - Users are scoped to a Restaurant and optionally to a Branch.
 - JWT claims carry `restaurant_id` and `branch_id` for fast authorization checks.
 
-## Current implementation state (as of session end)
+## Current implementation state
 
-### Done
+### Backend — Done
 - Full backend structure: Domain/Entities, Domain/Enums, DTOs, Services/Interfaces, Validators
 - Phone + password authentication with BCrypt hashing
-- Owner self-registration endpoint (creates Restaurant + Branch + User)
-- Invite activation endpoint (validates UserInvite, creates User)
-- JWT with role, branchId, restaurantId claims
+- `POST /auth/login` — returns JWT on valid credentials
+- `POST /auth/register-owner` — creates Restaurant + default Branch ("الفرع الرئيسي") + Owner user
+- `POST /auth/activate-invite` — validates UserInvite token (GUID), creates User, marks invite used
+- JWT includes: userId, role, fullName, restaurant_id, branch_id. Expires in 7 days.
 - FluentValidation on all auth request DTOs
-- Cashier orders dashboard (mock data): card grid, status badges, accept button, loading/empty states
-- Angular pages: login, register, activate, cashier, coordinator, branch-manager, restaurant-manager, driver
-- All Angular components use external .html and .scss files (no inline templates)
+- `GET /me` — returns current user info (auth required)
+- `GET /health` — health check endpoint
 
-### Mock / placeholder
-- Orders data is in-memory mock (OrderService._mockOrders) — not yet reading from DB
-- Accept order button shows alert placeholder — PATCH /orders/:id/accept not yet implemented
-- Coordinator, BranchManager, RestaurantManager, Driver pages are placeholder shells
+### Frontend — Done
+- Angular 17 standalone components, lazy-loaded routes, `authGuard`
+- Design system SCSS: `_tokens.scss`, `_base.scss`, `_typography.scss`, `_utilities.scss`, `_auth.scss`
+- 7 shared UI components: `ui-button`, `ui-input`, `ui-card`, `ui-status-badge`, `ui-loading-spinner`, `ui-empty-state`, `ui-success-modal`
+- Auth pages fully styled to approved prototype:
+  - **Login** (`/login`): dark brown hero (gradient `#2C2420 → #4A3830`), card-overlap layout, phone + password fields, show/hide toggle, success modal
+  - **Register** (`/register`): topbar with back arrow, two-section form (personal + restaurant), success modal (🎊)
+  - **Activate** (`/activate?token=`): blue hero (gradient `#1E3A5F → #2E4F7A`), tokenMissing warning state, success modal (🚀)
+- Cashier orders dashboard: card grid, status badges, accept button, loading/empty states (mock data)
+- All page layouts use `.auth-shell` centering wrapper (`max-width: 420px` phone-frame, `#E8E0D5` body background)
+- All auth pages contain auth form styles directly in component SCSS (Esbuild encapsulation workaround)
+
+### Frontend — Placeholder shells
+- Coordinator, BranchManager, RestaurantManager, Driver pages (routes exist, no content)
+
+### Backend — Mock / not yet wired
+- Orders: in-memory mock in `OrderService._mockOrders` — not reading from DB
+- `PATCH /orders/:id/accept` not yet implemented (button shows alert placeholder)
 
 ### Next priorities
 1. Wire orders to real DB (replace mock OrderService with EF queries scoped to branch)
-2. Implement PATCH /orders/:id/accept (PendingAcceptance → Accepted)
-3. Build coordinator dispatch board (assign driver, mark ready)
-4. Implement invite creation endpoint (POST /invites) for managers
+2. Implement `PATCH /orders/:id/accept` (PendingAcceptance → Accepted + OrderEventLog entry)
+3. Build coordinator dispatch board (assign driver, mark ReadyForDispatch → PendingHandover)
+4. Implement `POST /invites` — manager creates invite link for staff
 5. Real-time order updates (SignalR or polling)
+6. Build BranchManager, RestaurantManager, Driver dashboards
 
 ## Key business rules
 - Drivers cannot hold more than one active order simultaneously

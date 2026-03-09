@@ -1,54 +1,85 @@
-<div class="page">
-  <div class="card">
+<div class="auth-shell">
+<div class="login-page">
 
-    <div class="brand">
-      <div class="brand-icon">🍽️</div>
-      <h1 class="brand-name">نظام المطاعم</h1>
-      <p class="brand-tagline">أدر مطعمك بسهولة</p>
-    </div>
-
-    <form class="form" (ngSubmit)="submit()" #f="ngForm" novalidate>
-
-      <div class="field">
-        <label for="phone">رقم الهاتف</label>
-        <input
-          id="phone"
-          type="tel"
-          [(ngModel)]="phone"
-          name="phone"
-          placeholder=""
-          autocomplete="tel"
-          inputmode="tel"
-          [disabled]="loading"
-        />
-      </div>
-
-      <div class="field">
-        <label for="password">كلمة المرور</label>
-        <input
-          id="password"
-          type="password"
-          [(ngModel)]="password"
-          name="password"
-          placeholder="••••••••"
-          autocomplete="current-password"
-          [disabled]="loading"
-        />
-      </div>
-
-      <p class="error-msg" *ngIf="error" role="alert">{{ error }}</p>
-
-      <button type="submit" class="btn-primary" [disabled]="loading">
-        <span *ngIf="!loading">دخول</span>
-        <span *ngIf="loading" class="spinner"></span>
-      </button>
-
-    </form>
-
-    <div class="footer-links">
-      <span>مالك مطعم جديد؟</span>
-      <a routerLink="/register">سجّل مطعمك</a>
-    </div>
-
+  <!-- ── Hero ── -->
+  <div class="login-hero">
+    <div class="app-logo">🍽️</div>
+    <div class="app-name">مطعمي</div>
+    <div class="app-tagline">إدارة مطعمك بكل سهولة</div>
   </div>
+
+  <!-- ── Card wrap (overlaps hero) ── -->
+  <div class="login-card-wrap">
+    <div class="login-card-inner">
+
+      <div class="card-title">تسجيل الدخول</div>
+
+      <form class="form-stack" (ngSubmit)="submit()" novalidate>
+
+        <div class="input-group">
+          <label for="phone">رقم الجوال</label>
+          <input
+            id="phone"
+            class="input-field input-ltr"
+            type="tel"
+            placeholder="05xxxxxxxx"
+            [(ngModel)]="phone"
+            name="phone"
+            autocomplete="tel"
+            inputmode="tel"
+            [disabled]="loading"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="password">كلمة المرور</label>
+          <div class="input-password-wrap">
+            <input
+              id="password"
+              class="input-field"
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="أدخل كلمة المرور"
+              [(ngModel)]="password"
+              name="password"
+              autocomplete="current-password"
+              [disabled]="loading"
+            />
+            <button type="button" class="input-eye" (click)="togglePassword()">
+              {{ showPassword ? '🙈' : '👁️' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="auth-error" *ngIf="error" role="alert">{{ error }}</div>
+
+        <button type="submit" class="auth-btn auth-btn-primary" [disabled]="loading">
+          <span class="btn-spinner" *ngIf="loading"></span>
+          <span *ngIf="!loading">دخول</span>
+        </button>
+
+        <div class="divider-text">أو</div>
+
+        <a routerLink="/register" class="auth-btn auth-btn-secondary">
+          تسجيل حساب مطعم جديد
+        </a>
+
+      </form>
+    </div>
+
+    <p class="link-text">
+      لديك دعوة؟ <a routerLink="/activate">فعّل حسابك هنا</a>
+    </p>
+  </div>
+
 </div>
+</div>
+
+<ui-success-modal
+  *ngIf="showSuccess"
+  icon="✅"
+  iconBg="#D1FAE5"
+  title="أهلاً وسهلاً!"
+  message="تم تسجيل الدخول بنجاح. جاري توجيهك إلى لوحة التحكم."
+  actionLabel="الانتقال للوحة التحكم"
+  (proceed)="onSuccessProceed()"
+></ui-success-modal>

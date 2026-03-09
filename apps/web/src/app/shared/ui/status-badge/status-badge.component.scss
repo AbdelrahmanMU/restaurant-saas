@@ -1,0 +1,18 @@
+@use '../../styles/tokens' as *;
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: $radius-badge;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+
+  &.pending   { background: rgba($status-pending,   0.12); color: darken($status-pending,   15%); }
+  &.accepted  { background: rgba($status-accepted,  0.12); color: darken($status-accepted,  10%); }
+  &.preparing { background: rgba($status-preparing, 0.12); color: darken($status-preparing, 10%); }
+  &.ready     { background: rgba($status-ready,     0.12); color: darken($status-ready,     15%); }
+  &.delivered { background: rgba($status-delivered, 0.12); color: darken($status-delivered, 10%); }
+  &.cancelled { background: rgba($status-cancelled, 0.10); color: darken($status-cancelled,  5%); }
+}

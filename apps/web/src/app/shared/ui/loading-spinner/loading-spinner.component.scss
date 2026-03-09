@@ -1,0 +1,25 @@
+@use '../../styles/tokens' as *;
+
+.spinner {
+  display: inline-block;
+  border-radius: 50%;
+  border-style: solid;
+  animation: spin 0.65s linear infinite;
+
+  &.sm  { width: 18px; height: 18px; border-width: 2px; }
+  &.md  { width: 24px; height: 24px; border-width: 3px; }
+  &.lg  { width: 36px; height: 36px; border-width: 4px; }
+
+  &.white {
+    border-color: rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+  }
+  &.primary {
+    border-color: rgba($mahogany, 0.2);
+    border-top-color: $mahogany;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

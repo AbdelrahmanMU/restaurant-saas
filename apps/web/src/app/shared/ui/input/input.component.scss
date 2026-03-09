@@ -1,0 +1,81 @@
+@use '../../styles/tokens' as *;
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $text-primary;
+  }
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 1.5px solid $border;
+    border-radius: $radius-input;
+    font-size: 1rem;
+    color: $text-primary;
+    background: $surface;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+    outline: none;
+    box-sizing: border-box;
+    text-align: right;
+    min-height: $touch-md;
+
+    &::placeholder { color: $muted; }
+
+    &:focus {
+      border-color: $amber;
+      box-shadow: 0 0 0 3px rgba($amber, 0.15);
+    }
+
+    &:disabled {
+      background: $linen;
+      cursor: not-allowed;
+      color: $muted;
+    }
+  }
+
+  // Room for the password toggle button
+  input[type="password"],
+  input[type="text"] {
+    padding-inline-start: 2.75rem;
+  }
+}
+
+.toggle-pw {
+  position: absolute;
+  inset-inline-start: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.25rem;
+  color: $muted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover { color: $text-primary; }
+}
+
+.has-error input {
+  border-color: $status-cancelled;
+  &:focus { box-shadow: 0 0 0 3px rgba($status-cancelled, 0.15); }
+}
+
+.error-msg {
+  font-size: 0.8rem;
+  color: $status-cancelled;
+  margin: 0;
+}

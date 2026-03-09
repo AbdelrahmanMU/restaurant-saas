@@ -1,78 +1,135 @@
-<div class="page">
-  <div class="card">
+<div class="auth-shell">
+<div class="register-page">
 
-    <div class="header">
-      <h1>سجّل مطعمك</h1>
-      <p>أنشئ حسابك وابدأ إدارة مطعمك الآن</p>
+  <!-- ── Topbar ── -->
+  <div class="page-topbar">
+    <a routerLink="/login" class="btn-icon">←</a>
+    <span class="page-topbar-title">إنشاء حساب</span>
+    <div class="page-topbar-spacer"></div>
+  </div>
+
+  <p class="register-subtitle">أدخل بيانات مطعمك للبدء</p>
+
+  <div class="register-content">
+
+    <div class="register-card">
+
+      <!-- Personal info section -->
+      <div class="section-label">بياناتك الشخصية</div>
+      <div class="form-stack" style="margin-bottom: 24px;">
+
+        <div class="input-group">
+          <label for="fullName">الاسم الكامل</label>
+          <input
+            id="fullName"
+            class="input-field"
+            type="text"
+            placeholder="محمد أحمد الزهراني"
+            [(ngModel)]="fullName"
+            name="fullName"
+            autocomplete="name"
+            [disabled]="loading"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="phone">رقم الجوال</label>
+          <input
+            id="phone"
+            class="input-field input-ltr"
+            type="tel"
+            placeholder="05xxxxxxxx"
+            [(ngModel)]="phone"
+            name="phone"
+            autocomplete="tel"
+            inputmode="tel"
+            [disabled]="loading"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="password">كلمة المرور</label>
+          <div class="input-password-wrap">
+            <input
+              id="password"
+              class="input-field"
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="٨ أحرف على الأقل"
+              [(ngModel)]="password"
+              name="password"
+              autocomplete="new-password"
+              [disabled]="loading"
+            />
+            <button type="button" class="input-eye" (click)="togglePassword()">
+              {{ showPassword ? '🙈' : '👁️' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="confirmPassword">تأكيد كلمة المرور</label>
+          <div class="input-password-wrap">
+            <input
+              id="confirmPassword"
+              class="input-field"
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              placeholder="أعد كتابة كلمة المرور"
+              [(ngModel)]="confirmPassword"
+              name="confirmPassword"
+              autocomplete="new-password"
+              [disabled]="loading"
+            />
+            <button type="button" class="input-eye" (click)="toggleConfirmPassword()">
+              {{ showConfirmPassword ? '🙈' : '👁️' }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Restaurant section -->
+      <div class="section-label">بيانات المطعم</div>
+      <div class="form-stack">
+        <div class="input-group">
+          <label for="restaurantName">اسم المطعم</label>
+          <input
+            id="restaurantName"
+            class="input-field"
+            type="text"
+            placeholder="مطعم الأصيل"
+            [(ngModel)]="restaurantName"
+            name="restaurantName"
+            [disabled]="loading"
+          />
+        </div>
+      </div>
+
     </div>
 
-    <form class="form" (ngSubmit)="submit()" novalidate>
-
-      <div class="field">
-        <label for="fullName">اسمك الكامل</label>
-        <input
-          id="fullName"
-          type="text"
-          [(ngModel)]="fullName"
-          name="fullName"
-          placeholder="محمد عبدالله"
-          autocomplete="name"
-          [disabled]="loading"
-        />
-      </div>
-
-      <div class="field">
-        <label for="phone">رقم الهاتف</label>
-        <input
-          id="phone"
-          type="tel"
-          [(ngModel)]="phone"
-          name="phone"
-          placeholder=""
-          autocomplete="tel"
-          inputmode="tel"
-          [disabled]="loading"
-        />
-      </div>
-
-      <div class="field">
-        <label for="password">كلمة المرور</label>
-        <input
-          id="password"
-          type="password"
-          [(ngModel)]="password"
-          name="password"
-          placeholder="8 أحرف على الأقل"
-          autocomplete="new-password"
-          [disabled]="loading"
-        />
-      </div>
-
-      <div class="field">
-        <label for="restaurantName">اسم المطعم</label>
-        <input
-          id="restaurantName"
-          type="text"
-          [(ngModel)]="restaurantName"
-          name="restaurantName"
-          placeholder="مطعم الشيف"
-          [disabled]="loading"
-        />
-      </div>
-
-      <p class="error-msg" *ngIf="error" role="alert">{{ error }}</p>
-
-      <button type="submit" class="btn-primary" [disabled]="loading">
+    <!-- Error banner + submit button outside the card -->
+    <div style="margin-top: 20px;">
+      <div class="auth-error" *ngIf="error" role="alert" style="margin-bottom: 16px;">{{ error }}</div>
+      <button class="auth-btn auth-btn-primary" (click)="submit()" [disabled]="loading">
+        <span class="btn-spinner" *ngIf="loading"></span>
         <span *ngIf="!loading">إنشاء الحساب</span>
-        <span *ngIf="loading" class="spinner"></span>
       </button>
-
-    </form>
-
-    <div class="footer-links">
-      <span>لديك حساب؟</span>
-      <a routerLink="/login">سجّل دخولك</a>
     </div>
+
+    <p class="link-text" style="margin-top: 16px;">
+      لديك حساب؟ <a routerLink="/login">تسجيل دخول</a>
+    </p>
 
   </div>
+
 </div>
+</div>
+
+<ui-success-modal
+  *ngIf="showSuccess"
+  icon="🎊"
+  iconBg="#DBEAFE"
+  title="تم إنشاء حسابك!"
+  message="تم إنشاء حساب مطعمك بنجاح. الفرع الرئيسي جاهز للعمل."
+  actionLabel="بدء الاستخدام"
+  (proceed)="onSuccessProceed()"
+></ui-success-modal>

@@ -1,75 +1,122 @@
-<div class="page">
-  <div class="card">
+<div class="auth-shell">
+<div class="activate-page">
 
-    <!-- Invalid token -->
-    <div class="invalid-state" *ngIf="tokenMissing">
-      <div class="invalid-icon">⚠️</div>
-      <h2>رابط غير صالح</h2>
-      <p>هذا الرابط غير صحيح. تأكد من الرابط الذي أرسله لك المدير.</p>
-      <a routerLink="/login" class="btn-secondary">العودة لتسجيل الدخول</a>
+  <!-- ── Hero ── -->
+  <div class="activate-hero">
+    <span class="welcome-emoji">🎉</span>
+    <h2>مرحباً بك في الفريق!</h2>
+    <p>أنت مدعوّ للانضمام. أكمل بياناتك لتفعيل حسابك.</p>
+  </div>
+
+  <!-- ── Card wrap (overlaps hero) ── -->
+  <div class="activate-card-wrap">
+
+    <!-- Invalid token notice -->
+    <div class="invalid-notice" *ngIf="tokenMissing">
+      <span class="invalid-notice-icon">⚠️</span>
+      <div>
+        <div class="invalid-notice-title">رابط غير صالح</div>
+        <div class="invalid-notice-body">هذا الرابط غير صحيح أو منتهي. يرجى التواصل مع المدير للحصول على رابط دعوة جديد.</div>
+      </div>
     </div>
 
     <!-- Activation form -->
     <ng-container *ngIf="!tokenMissing">
+      <div class="activate-inner">
 
-      <div class="header">
-        <div class="header-icon">✉️</div>
-        <h1>تفعيل الحساب</h1>
-        <p>أنت مدعوّ للانضمام. أكمل بياناتك لتفعيل حسابك.</p>
+        <div class="card-title">أكمل بياناتك</div>
+
+        <form class="form-stack" (ngSubmit)="submit()" novalidate>
+
+          <div class="input-group">
+            <label for="fullName">الاسم الكامل</label>
+            <input
+              id="fullName"
+              class="input-field"
+              type="text"
+              placeholder="أدخل اسمك الكامل"
+              [(ngModel)]="fullName"
+              name="fullName"
+              autocomplete="name"
+              [disabled]="loading"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="phone">رقم الجوال</label>
+            <input
+              id="phone"
+              class="input-field input-ltr"
+              type="tel"
+              placeholder="05xxxxxxxx"
+              [(ngModel)]="phone"
+              name="phone"
+              autocomplete="tel"
+              inputmode="tel"
+              [disabled]="loading"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="password">كلمة المرور</label>
+            <div class="input-password-wrap">
+              <input
+                id="password"
+                class="input-field"
+                [type]="showPassword ? 'text' : 'password'"
+                placeholder="اختر كلمة مرور قوية"
+                [(ngModel)]="password"
+                name="password"
+                autocomplete="new-password"
+                [disabled]="loading"
+              />
+              <button type="button" class="input-eye" (click)="togglePassword()">
+                {{ showPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="confirmPassword">تأكيد كلمة المرور</label>
+            <div class="input-password-wrap">
+              <input
+                id="confirmPassword"
+                class="input-field"
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                placeholder="أعد كتابة كلمة المرور"
+                [(ngModel)]="confirmPassword"
+                name="confirmPassword"
+                autocomplete="new-password"
+                [disabled]="loading"
+              />
+              <button type="button" class="input-eye" (click)="toggleConfirmPassword()">
+                {{ showConfirmPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
+          </div>
+
+          <div class="auth-error" *ngIf="error" role="alert">{{ error }}</div>
+
+          <button type="submit" class="auth-btn auth-btn-primary" [disabled]="loading">
+            <span class="btn-spinner" *ngIf="loading"></span>
+            <span *ngIf="!loading">تفعيل الحساب</span>
+          </button>
+
+        </form>
       </div>
-
-      <form class="form" (ngSubmit)="submit()" novalidate>
-
-        <div class="field">
-          <label for="fullName">اسمك الكامل</label>
-          <input
-            id="fullName"
-            type="text"
-            [(ngModel)]="fullName"
-            name="fullName"
-            placeholder="محمد عبدالله"
-            autocomplete="name"
-            [disabled]="loading"
-          />
-        </div>
-
-        <div class="field">
-          <label for="phone">رقم هاتفك</label>
-          <input
-            id="phone"
-            type="tel"
-            [(ngModel)]="phone"
-            name="phone"
-            placeholder="+966500000000"
-            autocomplete="tel"
-            inputmode="tel"
-            [disabled]="loading"
-          />
-        </div>
-
-        <div class="field">
-          <label for="password">كلمة مرور جديدة</label>
-          <input
-            id="password"
-            type="password"
-            [(ngModel)]="password"
-            name="password"
-            placeholder="8 أحرف على الأقل"
-            autocomplete="new-password"
-            [disabled]="loading"
-          />
-        </div>
-
-        <p class="error-msg" *ngIf="error" role="alert">{{ error }}</p>
-
-        <button type="submit" class="btn-primary" [disabled]="loading">
-          <span *ngIf="!loading">تفعيل الحساب</span>
-          <span *ngIf="loading" class="spinner"></span>
-        </button>
-
-      </form>
-
     </ng-container>
 
   </div>
+
 </div>
+</div>
+
+<ui-success-modal
+  *ngIf="showSuccess"
+  icon="🚀"
+  iconBg="#EDE9FE"
+  title="تم تفعيل حسابك!"
+  message="مرحباً بك في الفريق. حسابك جاهز للاستخدام الآن."
+  actionLabel="بدء العمل"
+  (proceed)="onSuccessProceed()"
+></ui-success-modal>

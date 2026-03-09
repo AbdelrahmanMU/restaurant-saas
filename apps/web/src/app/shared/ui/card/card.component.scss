@@ -1,0 +1,13 @@
+@use '../../styles/tokens' as *;
+
+.card {
+  background: $surface;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+  padding: $space-6;
+  border: 1px solid $border;
+
+  &.has-accent {
+    border-inline-start: 4px solid var(--accent-color, #{$mahogany});
+  }
+}

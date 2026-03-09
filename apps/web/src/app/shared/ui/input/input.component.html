@@ -1,0 +1,28 @@
+<div class="field" [class.has-error]="error">
+  <label *ngIf="label" [for]="id">{{ label }}</label>
+
+  <div class="input-wrap">
+    <input
+      [id]="id"
+      [type]="effectiveType"
+      [value]="value"
+      [placeholder]="placeholder"
+      [autocomplete]="autocomplete"
+      [attr.inputmode]="inputmode"
+      [disabled]="disabled"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+    />
+    <button
+      *ngIf="type === 'password'"
+      type="button"
+      class="toggle-pw"
+      (click)="togglePassword()"
+      [attr.aria-label]="showPassword() ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'"
+    >
+      {{ showPassword() ? '🙈' : '👁️' }}
+    </button>
+  </div>
+
+  <p *ngIf="error" class="error-msg" role="alert">{{ error }}</p>
+</div>

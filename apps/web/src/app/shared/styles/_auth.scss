@@ -1,14 +1,4 @@
-@use '../../shared/styles/tokens' as *;
-
-// ─── Outer shell ──────────────────────────────────────────────────────────────
-.auth-shell {
-  min-height: 100vh;
-  background: #E8E0D5;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 32px 16px 48px;
-}
+@use './tokens' as *;
 
 // ─── Form stack ───────────────────────────────────────────────────────────────
 .form-stack {
@@ -60,12 +50,14 @@
   &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 
+// Phone / numeric fields
 .input-ltr {
   direction: ltr;
   text-align: left;
   letter-spacing: 0.5px;
 }
 
+// Password wrapper
 .input-password-wrap {
   position: relative;
 
@@ -96,6 +88,53 @@
   color: $clay;
   margin-bottom: 20px;
   text-align: right;
+}
+
+// ─── Section label ────────────────────────────────────────────────────────────
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: $muted;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: right;
+  padding: 0 0 8px;
+  border-bottom: 1px solid $border;
+  margin-bottom: 20px;
+}
+
+// ─── Divider with text ────────────────────────────────────────────────────────
+.divider-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0;
+  color: $muted;
+  font-size: 13px;
+
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: $border;
+  }
+}
+
+// ─── Link text ────────────────────────────────────────────────────────────────
+.link-text {
+  text-align: center;
+  font-size: 14px;
+  color: $muted;
+  margin-top: 8px;
+
+  a {
+    color: $mahogany;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover { text-decoration: underline; }
+  }
 }
 
 // ─── Error banner ─────────────────────────────────────────────────────────────
@@ -143,6 +182,19 @@
   }
 }
 
+.auth-btn-secondary {
+  background: transparent;
+  color: $mahogany;
+  border: 1.5px solid $border !important;
+  box-shadow: none;
+
+  &:hover:not(:disabled) {
+    background: rgba($mahogany, 0.05);
+    border-color: $amber !important;
+  }
+}
+
+// ─── Spinner inside buttons ───────────────────────────────────────────────────
 .btn-spinner {
   width: 22px;
   height: 22px;
@@ -157,111 +209,21 @@
   to { transform: rotate(360deg); }
 }
 
-// ─── Phone frame ──────────────────────────────────────────────────────────────
-.activate-page {
-  background: $cream;
-  width: 100%;
-  max-width: 420px;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba($clay, 0.15);
+// ─── Icon button (topbar back) ────────────────────────────────────────────────
+.btn-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: $linen;
+  border: none;
   display: flex;
-  flex-direction: column;
-}
-
-// ─── Hero (dark blue) ─────────────────────────────────────────────────────────
-.activate-hero {
-  background: linear-gradient(160deg, #1E3A5F 0%, #2E4F7A 100%);
-  padding: 48px 24px 72px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -30px;
-    left: -30px;
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    background: rgba(59, 130, 246, 0.15);
-  }
-
-  h2 {
-    font-family: $font-display;
-    font-size: 24px;
-    font-weight: 700;
-    color: #fff;
-    position: relative;
-    z-index: 1;
-  }
-
-  p {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
-    margin-top: 6px;
-    position: relative;
-    z-index: 1;
-  }
-}
-
-.welcome-emoji {
-  font-size: 48px;
-  display: block;
-  margin-bottom: 12px;
-  position: relative;
-  z-index: 1;
-}
-
-// ─── Card wrap (cream, rounded, overlaps hero) ────────────────────────────────
-.activate-card-wrap {
-  background: $cream;
-  flex: 1;
-  padding: 0 20px 40px;
-  margin-top: -32px;
-  border-radius: 28px 28px 0 0;
-  position: relative;
-  z-index: 2;
-}
-
-// ─── Inner card ───────────────────────────────────────────────────────────────
-.activate-inner {
-  background: $surface;
-  border-radius: 20px;
-  padding: 28px 20px 24px;
-  margin-top: -20px;
-  border: 1px solid $border;
-  box-shadow: 0 4px 24px rgba($clay, 0.08);
-}
-
-// ─── Invalid token notice ─────────────────────────────────────────────────────
-.invalid-notice {
-  margin-top: 20px;
-  background: #FEF3C7;
-  border: 1px solid #FCD34D;
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.invalid-notice-icon {
-  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 120ms ease;
   flex-shrink: 0;
-  line-height: 1.4;
-}
+  text-decoration: none;
 
-.invalid-notice-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #92400E;
-  margin-bottom: 4px;
-}
-
-.invalid-notice-body {
-  font-size: 13px;
-  color: #B45309;
-  line-height: 1.5;
+  &:active { transform: scale(0.93); }
 }

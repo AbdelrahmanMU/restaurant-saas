@@ -63,15 +63,31 @@ apps/web/src/app/
     services/           auth.service.ts, api-client.service.ts, order.service.ts
     guards/             auth.guard.ts
   pages/
-    login/              Phone + password login (blue gradient card)
-    register/           Owner self-registration (green gradient card)
-    activate/           Invite activation via ?token= query param (purple card)
+    login/              Phone + password login (dark brown hero, card-overlap layout)
+    register/           Owner self-registration (topbar + card, two sections)
+    activate/           Invite activation via ?token= query param (blue hero)
     cashier/            Order dashboard with card grid, loading/empty states
-    coordinator/
-    branch-manager/
-    restaurant-manager/
-    driver/
-  shared/               Reserved for future reusable components
+    coordinator/        Placeholder shell
+    branch-manager/     Placeholder shell
+    restaurant-manager/ Placeholder shell
+    driver/             Placeholder shell
+  shared/
+    styles/
+      _tokens.scss      Design tokens (colors, fonts, spacing, radii, shadows)
+      _base.scss        CSS reset + global box-sizing / direction: rtl
+      _typography.scss  Global heading/body type styles
+      _utilities.scss   Helper classes
+      _auth.scss        Auth form patterns (form-stack, input-group, etc.) — also
+                        copied into each auth component SCSS for encapsulation
+    ui/
+      index.ts                  Barrel export for all UI components
+      button/                   ui-button (variant, size inputs)
+      input/                    ui-input (ControlValueAccessor)
+      card/                     ui-card (content projection)
+      status-badge/             ui-status-badge (OrderStatus → Arabic label + color)
+      loading-spinner/          ui-loading-spinner
+      empty-state/              ui-empty-state (icon + message + optional action)
+      success-modal/            ui-success-modal (icon, title, message, proceed output)
 ```
 
 ## Authentication
@@ -110,6 +126,34 @@ cd apps/api && dotnet run
 cd apps/web && npm start
 ```
 
+## Frontend styling rules
+
+Angular uses the **Esbuild** builder. Global SCSS (`styles.scss`) compiles correctly but
+component-scoped styles take priority. Key rule:
+
+**Auth form styles must be in each component's own SCSS file** — not only in the global
+`_auth.scss` — because Esbuild's per-component compilation does not reliably apply global
+class rules to component templates in this project's configuration.
+
+Each auth page component (`login`, `register`, `activate`) therefore contains a full local
+copy of the shared auth patterns (`.form-stack`, `.input-group`, `.input-field`, `.auth-btn`,
+etc.) imported via `@use '../../shared/styles/tokens' as *`.
+
+The `styles.scss` global entry still `@use`s `_auth.scss` so success-modal and any future
+non-encapsulated contexts can rely on it.
+
+### SCSS @use path rule
+Always use **relative paths** for `@use`. The `stylePreprocessorOptions.includePaths` in
+`angular.json` does NOT propagate to individual component SCSS compilations under Esbuild.
+
+```scss
+// ✅ Correct
+@use '../../shared/styles/tokens' as *;
+
+// ❌ Wrong — breaks at build time
+@use 'tokens' as *;
+```
+
 ## Dev notes
 - Docker Desktop must be started manually before running the DB
 - API port is 5000 (configured in Properties/launchSettings.json)
@@ -117,3 +161,5 @@ cd apps/web && npm start
 - Azure DevOps NU1900 / NU1301 warnings are from an unrelated corporate NuGet feed — benign, ignore them
 - dotnet-ef global tool v8.0.0 is installed
 - BCrypt work factor default (10) is used for password hashing
+- `ui-success-modal` is used on all three auth pages; it receives `icon`, `iconBg`, `title`,
+  `message`, `actionLabel` inputs and emits `(proceed)` which triggers role-based navigation

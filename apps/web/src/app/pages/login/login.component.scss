@@ -1,148 +1,300 @@
-.page {
+@use '../../shared/styles/tokens' as *;
+
+// ─── Outer shell: full viewport, prototype body bg, centers the frame ─────────
+.auth-shell {
   min-height: 100vh;
+  background: #E8E0D5;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%);
-  padding: 1rem;
-  direction: rtl;
+  align-items: flex-start;
+  padding: 32px 16px 48px;
 }
 
-.card {
-  background: #fff;
-  border-radius: 20px;
-  padding: 2.5rem 2rem;
+// ─── Phone frame: the actual page content, constrained width ──────────────────
+.login-page {
+  background: $cream;
   width: 100%;
-  max-width: 380px;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
-}
-
-// Brand
-.brand {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.brand-icon {
-  font-size: 3rem;
-  line-height: 1;
-  margin-bottom: 0.5rem;
-}
-
-.brand-name {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #1e3a8a;
-  margin: 0 0 0.25rem;
-}
-
-.brand-tagline {
-  font-size: 0.9rem;
-  color: #6b7280;
-  margin: 0;
-}
-
-// Form
-.form {
+  max-width: 420px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba($clay, 0.15);
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
 }
 
-.field {
+// ─── Form stack ───────────────────────────────────────────────────────────────
+.form-stack {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 16px;
+}
+
+// ─── Input group ──────────────────────────────────────────────────────────────
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 
   label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #374151;
-  }
-
-  input {
-    padding: 0.75rem 1rem;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 10px;
-    font-size: 1rem;
-    transition: border-color 0.15s;
-    outline: none;
-    width: 100%;
-    box-sizing: border-box;
+    font-size: 14px;
+    font-weight: 500;
+    color: $clay;
     text-align: right;
-
-    &:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-
-    &:disabled {
-      background: #f9fafb;
-      cursor: not-allowed;
-    }
   }
 }
 
-.error-msg {
-  background: #fef2f2;
-  color: #dc2626;
-  border-radius: 8px;
-  padding: 0.6rem 0.9rem;
-  font-size: 0.875rem;
-  margin: 0;
-  text-align: center;
-}
+// ─── Input field ──────────────────────────────────────────────────────────────
+.input-field {
+  width: 100%;
+  height: 56px;
+  padding: 0 16px;
+  border-radius: $radius-input;
+  border: 1.5px solid $border;
+  background: $cream;
+  font-family: $font-body;
+  font-size: 16px;
+  font-weight: 400;
+  color: $clay;
+  text-align: right;
+  direction: rtl;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
 
-.btn-primary {
-  padding: 0.85rem;
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-size: 1.05rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 52px;
+  &::placeholder { color: $muted; font-weight: 300; }
 
-  &:hover:not(:disabled) { background: #1d4ed8; }
-  &:active:not(:disabled) { transform: scale(0.98); }
+  &:focus {
+    border-color: $mahogany;
+    background: $surface;
+    box-shadow: 0 0 0 3px rgba($mahogany, 0.10);
+  }
+
   &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 
-.spinner {
+.input-ltr {
+  direction: ltr;
+  text-align: left;
+  letter-spacing: 0.5px;
+}
+
+.input-password-wrap {
+  position: relative;
+
+  .input-field { padding-left: 48px; }
+}
+
+.input-eye {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $muted;
+  font-size: 18px;
+  padding: 4px;
+  line-height: 1;
+
+  &:hover { color: $clay; }
+}
+
+// ─── Card title ───────────────────────────────────────────────────────────────
+.card-title {
+  font-family: $font-display;
+  font-size: 20px;
+  font-weight: 600;
+  color: $clay;
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+// ─── Divider with text ────────────────────────────────────────────────────────
+.divider-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0;
+  color: $muted;
+  font-size: 13px;
+
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: $border;
+  }
+}
+
+// ─── Link text ────────────────────────────────────────────────────────────────
+.link-text {
+  text-align: center;
+  font-size: 14px;
+  color: $muted;
+  margin-top: 8px;
+
+  a {
+    color: $mahogany;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover { text-decoration: underline; }
+  }
+}
+
+// ─── Error banner ─────────────────────────────────────────────────────────────
+.auth-error {
+  background: rgba($status-cancelled, 0.08);
+  color: darken($status-cancelled, 5%);
+  border: 1px solid rgba($status-cancelled, 0.22);
+  border-radius: $radius-sm;
+  padding: 12px 16px;
+  font-size: 14px;
+  text-align: center;
+}
+
+// ─── Buttons ─────────────────────────────────────────────────────────────────
+.auth-btn {
+  width: 100%;
+  height: 56px;
+  border-radius: $radius-button;
+  border: none;
+  font-family: $font-body;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 120ms ease;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+
+  &:active:not(:disabled) { transform: scale(0.97); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+}
+
+.auth-btn-primary {
+  background: $mahogany;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba($mahogany, 0.30);
+
+  &:hover:not(:disabled) {
+    background: $mahogany-dk;
+    box-shadow: 0 6px 20px rgba($mahogany, 0.38);
+  }
+}
+
+.auth-btn-secondary {
+  background: transparent;
+  color: $mahogany;
+  border: 1.5px solid $border !important;
+  box-shadow: none;
+
+  &:hover:not(:disabled) {
+    background: rgba($mahogany, 0.05);
+    border-color: $amber !important;
+  }
+}
+
+.btn-spinner {
   width: 22px;
   height: 22px;
   border: 3px solid rgba(255, 255, 255, 0.35);
   border-top-color: #fff;
   border-radius: 50%;
-  animation: spin 0.65s linear infinite;
+  animation: auth-spin 0.65s linear infinite;
   display: inline-block;
 }
 
-@keyframes spin {
+@keyframes auth-spin {
   to { transform: rotate(360deg); }
 }
 
-// Footer links
-.footer-links {
-  margin-top: 1.75rem;
+// ─── Hero ─────────────────────────────────────────────────────────────────────
+.login-hero {
+  background: linear-gradient(160deg, #2C2420 0%, #4A3830 100%);
+  padding: 48px 24px 80px;
   text-align: center;
-  font-size: 0.9rem;
-  color: #6b7280;
-  display: flex;
-  justify-content: center;
-  gap: 0.4rem;
-  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
 
-  a {
-    color: #2563eb;
-    font-weight: 600;
-    text-decoration: none;
-
-    &:hover { text-decoration: underline; }
+  &::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(196, 118, 42, 0.12);
   }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    left: -20px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(139, 58, 42, 0.15);
+  }
+}
+
+.app-logo {
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.10);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.app-name {
+  font-family: $font-display;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+.app-tagline {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+// ─── Card wrap (cream, rounded, overlaps hero by 32px) ────────────────────────
+.login-card-wrap {
+  background: $cream;
+  flex: 1;
+  padding: 0 20px 32px;
+  margin-top: -32px;
+  border-radius: 28px 28px 0 0;
+  position: relative;
+  z-index: 2;
+}
+
+// ─── Card inner (white, floats up 20px into the card-wrap / hero boundary) ────
+.login-card-inner {
+  background: $surface;
+  border-radius: 20px;
+  padding: 28px 20px 24px;
+  margin-top: -20px;
+  box-shadow: 0 4px 24px rgba($clay, 0.08);
+  border: 1px solid $border;
 }
