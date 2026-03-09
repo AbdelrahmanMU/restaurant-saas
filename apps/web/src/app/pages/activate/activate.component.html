@@ -1,0 +1,75 @@
+<div class="page">
+  <div class="card">
+
+    <!-- Invalid token -->
+    <div class="invalid-state" *ngIf="tokenMissing">
+      <div class="invalid-icon">⚠️</div>
+      <h2>رابط غير صالح</h2>
+      <p>هذا الرابط غير صحيح. تأكد من الرابط الذي أرسله لك المدير.</p>
+      <a routerLink="/login" class="btn-secondary">العودة لتسجيل الدخول</a>
+    </div>
+
+    <!-- Activation form -->
+    <ng-container *ngIf="!tokenMissing">
+
+      <div class="header">
+        <div class="header-icon">✉️</div>
+        <h1>تفعيل الحساب</h1>
+        <p>أنت مدعوّ للانضمام. أكمل بياناتك لتفعيل حسابك.</p>
+      </div>
+
+      <form class="form" (ngSubmit)="submit()" novalidate>
+
+        <div class="field">
+          <label for="fullName">اسمك الكامل</label>
+          <input
+            id="fullName"
+            type="text"
+            [(ngModel)]="fullName"
+            name="fullName"
+            placeholder="محمد عبدالله"
+            autocomplete="name"
+            [disabled]="loading"
+          />
+        </div>
+
+        <div class="field">
+          <label for="phone">رقم هاتفك</label>
+          <input
+            id="phone"
+            type="tel"
+            [(ngModel)]="phone"
+            name="phone"
+            placeholder="+966500000000"
+            autocomplete="tel"
+            inputmode="tel"
+            [disabled]="loading"
+          />
+        </div>
+
+        <div class="field">
+          <label for="password">كلمة مرور جديدة</label>
+          <input
+            id="password"
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="8 أحرف على الأقل"
+            autocomplete="new-password"
+            [disabled]="loading"
+          />
+        </div>
+
+        <p class="error-msg" *ngIf="error" role="alert">{{ error }}</p>
+
+        <button type="submit" class="btn-primary" [disabled]="loading">
+          <span *ngIf="!loading">تفعيل الحساب</span>
+          <span *ngIf="loading" class="spinner"></span>
+        </button>
+
+      </form>
+
+    </ng-container>
+
+  </div>
+</div>

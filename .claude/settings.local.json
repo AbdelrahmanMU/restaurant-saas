@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet:*)",
+      "Bash(npx:*)",
+      "Bash(docker compose:*)"
+    ]
+  }
+}
