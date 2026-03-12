@@ -50,10 +50,9 @@
   &:active { transform: scale(0.93); }
 }
 
-.btn-logout {
-  background: rgba($status-cancelled, 0.08);
-  color: $status-cancelled;
-  font-size: 14px;
+.topbar-spacer {
+  width: 40px;
+  flex-shrink: 0;
 }
 
 // ─── Content ──────────────────────────────────────────────────────────────────

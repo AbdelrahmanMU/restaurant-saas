@@ -1,0 +1,412 @@
+@use '../../../shared/styles/tokens' as *;
+
+// ─── Shell ────────────────────────────────────────────────────────────────────
+.page-shell {
+  min-height: 100dvh;
+  background: $linen;
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+}
+
+// ─── Top bar ──────────────────────────────────────────────────────────────────
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-4;
+  background: $surface;
+  border-bottom: 1px solid $border;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar-title {
+  font-family: $font-display;
+  font-size: 18px;
+  font-weight: 600;
+  color: $clay;
+  flex: 1;
+  text-align: center;
+}
+
+.topbar-spacer { width: 40px; }
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: $linen;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: $clay;
+  flex-shrink: 0;
+
+  &:active { transform: scale(0.93); }
+}
+
+// ─── Content ──────────────────────────────────────────────────────────────────
+.page-content {
+  flex: 1;
+  padding: $space-4;
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+// ─── State boxes ──────────────────────────────────────────────────────────────
+.state-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  padding: $space-8;
+  color: $text-secondary;
+  font-size: 15px;
+}
+
+.error-box {
+  background: rgba($status-cancelled, 0.08);
+  color: darken($status-cancelled, 5%);
+  border: 1px solid rgba($status-cancelled, 0.2);
+  border-radius: $radius-sm;
+  padding: $space-3 $space-4;
+  font-size: 14px;
+  text-align: center;
+
+  &.small-error {
+    margin-top: $space-2;
+    font-size: 13px;
+  }
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid $border;
+  border-top-color: $mahogany;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ─── Users list ───────────────────────────────────────────────────────────────
+.users-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  background: $surface;
+  border-radius: $radius-card;
+  padding: $space-4;
+  border: 1.5px solid $border;
+  cursor: pointer;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    border-color: $mahogany;
+    box-shadow: $shadow-sm;
+  }
+}
+
+.user-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: $linen;
+  color: $mahogany;
+  font-family: $font-display;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: $clay;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-phone {
+  font-size: 12px;
+  color: $text-muted;
+  direction: ltr;
+  display: block;
+}
+
+.user-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.role-chip {
+  background: rgba($amber, 0.12);
+  color: $amber;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.chevron {
+  font-size: 16px;
+  color: $mahogany;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.empty-note {
+  text-align: center;
+  color: $text-muted;
+  font-size: 14px;
+  padding: $space-8;
+}
+
+// ─── Overlay + slide-up panel ─────────────────────────────────────────────────
+.panel-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba($clay, 0.4);
+  z-index: 40;
+  animation: fade-in 0.2s ease;
+}
+
+.detail-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 520px;
+  margin: 0 auto;
+  background: $surface;
+  border-radius: $radius-xl $radius-xl 0 0;
+  padding: $space-4 $space-5 $space-8;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  animation: slide-up 0.25s ease;
+  max-height: 85dvh;
+  overflow-y: auto;
+}
+
+.panel-handle {
+  width: 40px;
+  height: 4px;
+  background: $border;
+  border-radius: 2px;
+  margin: 0 auto $space-2;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+}
+
+.panel-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: $linen;
+  color: $mahogany;
+  font-family: $font-display;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.panel-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: $clay;
+}
+
+.panel-phone {
+  font-size: 13px;
+  color: $text-muted;
+  direction: ltr;
+}
+
+// ─── Panel sections ───────────────────────────────────────────────────────────
+.panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.panel-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.role-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.role-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: $linen;
+  border-radius: $radius-input;
+  padding: $space-3 $space-4;
+}
+
+.role-entry-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: $clay;
+}
+
+.btn-remove {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba($status-cancelled, 0.1);
+  color: $status-cancelled;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &:hover:not(:disabled) { background: rgba($status-cancelled, 0.18); }
+}
+
+.hint-text {
+  font-size: 12px;
+  color: $text-muted;
+  margin: 0;
+  text-align: center;
+}
+
+.add-role-row {
+  display: flex;
+  gap: $space-3;
+  align-items: center;
+}
+
+.input-field {
+  flex: 1;
+  height: 48px;
+  padding: 0 $space-3;
+  border-radius: $radius-input;
+  border: 1.5px solid $border;
+  background: $cream;
+  font-family: $font-body;
+  font-size: 15px;
+  color: $clay;
+  direction: rtl;
+  outline: none;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+
+  &:focus {
+    border-color: $mahogany;
+    box-shadow: 0 0 0 3px rgba($mahogany, 0.10);
+  }
+}
+
+.btn-add {
+  height: 48px;
+  padding: 0 $space-5;
+  border-radius: $radius-button;
+  background: $mahogany;
+  color: #fff;
+  border: none;
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background $transition-fast;
+
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+  &:hover:not(:disabled) { background: $mahogany-dk; }
+}
+
+.mini-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+
+  &.mini-spinner-dark {
+    border-color: rgba($clay, 0.25);
+    border-top-color: $clay;
+  }
+}
+
+.btn-close-panel {
+  width: 100%;
+  height: 48px;
+  border-radius: $radius-button;
+  background: transparent;
+  border: 1.5px solid $border;
+  color: $text-secondary;
+  font-family: $font-body;
+  font-size: 15px;
+  cursor: pointer;
+  transition: border-color $transition-fast;
+
+  &:hover { border-color: $mahogany; color: $mahogany; }
+}
+
+// ─── Animations ───────────────────────────────────────────────────────────────
+@keyframes slide-up {
+  from { transform: translateY(60px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

@@ -1,10 +1,11 @@
 <div class="page-shell">
 
-  <!-- Top bar -->
+  <!-- Top bar: back arrow only — no logout button -->
   <header class="topbar">
     <button class="btn-icon" (click)="goBack()" aria-label="رجوع">&#8594;</button>
-    <h1 class="topbar-title">دعوة موظف</h1>
-    <button class="btn-icon btn-logout" (click)="auth.logout()" aria-label="تسجيل الخروج">&#x2715;</button>
+    <h1 class="topbar-title">دعوة موظف جديد</h1>
+    <!-- spacer keeps title centered -->
+    <span class="topbar-spacer"></span>
   </header>
 
   <main class="page-content">
@@ -73,6 +74,10 @@
 
       <button class="auth-btn auth-btn-secondary" (click)="reset()">
         دعوة موظف آخر
+      </button>
+
+      <button class="auth-btn auth-btn-secondary" (click)="goBack()">
+        العودة إلى لوحة التحكم
       </button>
     </div>
 

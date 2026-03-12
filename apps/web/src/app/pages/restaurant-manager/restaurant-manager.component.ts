@@ -41,9 +41,17 @@ export class RestaurantManagerComponent {
     { name: 'نورة الشمري',   role: 'كاشير',    phone: '0503334455', status: 'pending' }
   ];
 
+  get isOwner(): boolean {
+    return this.auth.getActiveRole() === 'Owner';
+  }
+
   constructor(public auth: AuthService, private router: Router) {}
 
   inviteStaff(): void {
     this.router.navigate(['/restaurant-manager/staff']);
+  }
+
+  manageUsers(): void {
+    this.router.navigate(['/owner/users']);
   }
 }

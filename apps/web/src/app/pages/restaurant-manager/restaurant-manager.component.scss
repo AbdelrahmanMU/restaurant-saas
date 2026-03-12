@@ -76,6 +76,69 @@
   font-weight: 400;
 }
 
+// ─── Owner: manage users button ───────────────────────────────────────────────
+.btn-manage-users {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  background: $surface;
+  border-radius: $radius-card;
+  padding: $space-4 $space-5;
+  box-shadow: $shadow-card;
+  border: 1.5px solid $border;
+  cursor: pointer;
+  text-align: right;
+  font-family: $font-body;
+  transition: border-color $transition-base, box-shadow $transition-base;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    border-color: $mahogany;
+    box-shadow: $shadow-lg;
+  }
+  &:active { transform: scale(0.98); }
+}
+
+.btn-manage-icon {
+  font-size: 26px;
+  width: 44px;
+  height: 44px;
+  background: $linen;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-manage-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.btn-manage-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: $clay;
+  display: block;
+}
+
+.btn-manage-sub {
+  font-size: 12px;
+  color: $text-muted;
+  display: block;
+}
+
+.btn-manage-arrow {
+  font-size: 18px;
+  color: $mahogany;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
 // ─── Invite button ────────────────────────────────────────────────────────────
 .btn-invite {
   display: inline-flex;

@@ -1,0 +1,104 @@
+<div class="page-shell">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <button class="btn-icon" (click)="auth.goToDashboard()" aria-label="رجوع">&#8594;</button>
+    <h1 class="topbar-title">إدارة الموظفين</h1>
+    <span class="topbar-spacer"></span>
+  </header>
+
+  <main class="page-content">
+
+    <!-- Loading -->
+    <div class="state-box" *ngIf="loading">
+      <span class="spinner"></span>
+      <span>جارٍ التحميل…</span>
+    </div>
+
+    <!-- Error -->
+    <div class="error-box" *ngIf="error && !loading">{{ error }}</div>
+
+    <!-- Users list -->
+    <div class="users-list" *ngIf="!loading && !error">
+      <div class="user-row" *ngFor="let u of users" (click)="openUser(u)">
+        <div class="user-avatar">{{ u.fullName.charAt(0) }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ u.fullName }}</span>
+          <span class="user-phone">{{ u.phoneNumber }}</span>
+        </div>
+        <div class="user-roles">
+          <span class="role-chip" *ngFor="let r of u.roles">{{ roleLabel(r) }}</span>
+        </div>
+        <span class="chevron">&#8592;</span>
+      </div>
+
+      <div class="empty-note" *ngIf="users.length === 0">لا يوجد موظفون بعد</div>
+    </div>
+
+  </main>
+
+  <!-- Slide-up detail panel -->
+  <div class="panel-overlay" *ngIf="selectedDetail !== null || detailLoading" (click)="closePanel()"></div>
+
+  <div class="detail-panel" *ngIf="selectedDetail !== null || detailLoading">
+    <div class="panel-handle"></div>
+
+    <!-- Loading detail -->
+    <div class="state-box" *ngIf="detailLoading && !selectedDetail">
+      <span class="spinner"></span>
+    </div>
+
+    <ng-container *ngIf="selectedDetail">
+      <div class="panel-header" (click)="$event.stopPropagation()">
+        <div class="panel-avatar">{{ selectedDetail.fullName.charAt(0) }}</div>
+        <div>
+          <div class="panel-name">{{ selectedDetail.fullName }}</div>
+          <div class="panel-phone">{{ selectedDetail.phoneNumber }}</div>
+        </div>
+      </div>
+
+      <!-- Current roles -->
+      <section class="panel-section" (click)="$event.stopPropagation()">
+        <h3 class="panel-section-title">الأدوار الحالية</h3>
+        <div class="role-list">
+          <div class="role-entry" *ngFor="let re of selectedDetail.roleEntries">
+            <span class="role-entry-label">{{ roleLabel(re.role) }}</span>
+            <button
+              class="btn-remove"
+              (click)="removeRole(re.id)"
+              [disabled]="removingRoleId === re.id || selectedDetail.roleEntries.length <= 1"
+              aria-label="حذف الدور">
+              <span *ngIf="removingRoleId === re.id" class="mini-spinner"></span>
+              <span *ngIf="removingRoleId !== re.id">&#10005;</span>
+            </button>
+          </div>
+          <p class="hint-text" *ngIf="selectedDetail.roleEntries.length <= 1">
+            لا يمكن حذف الدور الوحيد
+          </p>
+        </div>
+      </section>
+
+      <!-- Add role -->
+      <section class="panel-section" (click)="$event.stopPropagation()">
+        <h3 class="panel-section-title">إضافة دور</h3>
+        <div class="add-role-row">
+          <select class="input-field" [(ngModel)]="addRoleValue">
+            <option value="" disabled>اختر دوراً…</option>
+            <option *ngFor="let r of roleOptions" [value]="r.value">{{ r.label }}</option>
+          </select>
+          <button
+            class="btn-add"
+            (click)="addRole()"
+            [disabled]="!addRoleValue || addRoleLoading">
+            <span *ngIf="addRoleLoading" class="mini-spinner mini-spinner-dark"></span>
+            <span *ngIf="!addRoleLoading">إضافة</span>
+          </button>
+        </div>
+        <div class="error-box small-error" *ngIf="actionError">{{ actionError }}</div>
+      </section>
+
+      <button class="btn-close-panel" (click)="closePanel()">إغلاق</button>
+    </ng-container>
+  </div>
+
+</div>

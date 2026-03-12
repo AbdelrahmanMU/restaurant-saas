@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
 interface RoleOption {
@@ -27,26 +26,14 @@ const ROLE_META: Record<string, Omit<RoleOption, 'value'>> = {
   styleUrl: './select-role.component.scss'
 })
 export class SelectRoleComponent implements OnInit {
-  roleOptions: RoleOption[] = [];
   name = this.auth.getFullName();
+  roleOptions: RoleOption[] = [];
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(public auth: AuthService) {}
 
   ngOnInit(): void {
-    const roles = this.auth.getRoles();
-
-    // If somehow they only have 0 or 1 role, skip this screen
-    if (roles.length === 0) {
-      this.router.navigate(['/login']);
-      return;
-    }
-    if (roles.length === 1) {
-      this.auth.setActiveRole(roles[0]);
-      this.auth.navigateForRole(roles[0]);
-      return;
-    }
-
-    this.roleOptions = roles.map(r => ({
+    // Guard guarantees roles.length > 1 by the time we reach here
+    this.roleOptions = this.auth.getRoles().map(r => ({
       value: r,
       ...(ROLE_META[r] ?? { label: r, icon: '👤', description: '' })
     }));
@@ -55,9 +42,5 @@ export class SelectRoleComponent implements OnInit {
   select(role: string): void {
     this.auth.setActiveRole(role);
     this.auth.navigateForRole(role);
-  }
-
-  logout(): void {
-    this.auth.logout();
   }
 }

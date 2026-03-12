@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { selectRoleGuard } from './core/guards/select-role.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -46,13 +47,18 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/branch-manager/staff/staff.component').then(m => m.StaffComponent)
   },
   {
+    path: 'owner/users',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/owner/users/owner-users.component').then(m => m.OwnerUsersComponent)
+  },
+  {
     path: 'driver',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/driver/driver.component').then(m => m.DriverComponent)
   },
   {
     path: 'select-role',
-    canActivate: [authGuard],
+    canActivate: [selectRoleGuard],
     loadComponent: () => import('./pages/select-role/select-role.component').then(m => m.SelectRoleComponent)
   },
   { path: '**', redirectTo: 'login' }

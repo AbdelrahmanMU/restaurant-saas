@@ -17,6 +17,18 @@
     </div>
   </section>
 
+  <!-- ── Owner-only: manage users ──────────────────────────── -->
+  <section class="section" *ngIf="isOwner">
+    <button class="btn-manage-users" (click)="manageUsers()">
+      <span class="btn-manage-icon">👥</span>
+      <span class="btn-manage-text">
+        <span class="btn-manage-label">إدارة الموظفين والأدوار</span>
+        <span class="btn-manage-sub">عرض وتعديل أدوار الموظفين</span>
+      </span>
+      <span class="btn-manage-arrow">&#8592;</span>
+    </button>
+  </section>
+
   <!-- ── Staff management ───────────────────────────────────── -->
   <section class="section">
     <div class="section-header">

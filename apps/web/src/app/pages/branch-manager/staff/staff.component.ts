@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { InviteService, CreateInviteResponse } from '../../../core/services/invite.service';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -35,8 +34,7 @@ export class StaffComponent {
 
   constructor(
     private inviteService: InviteService,
-    public auth: AuthService,
-    private router: Router
+    public auth: AuthService
   ) {}
 
   get canSubmit(): boolean {
@@ -56,13 +54,9 @@ export class StaffComponent {
       role: this.selectedRole,
       branchId
     }).subscribe({
-      next: (res) => {
-        this.result = res;
-        this.loading = false;
-      },
+      next: (res) => { this.result = res; this.loading = false; },
       error: (err) => {
-        const msg = err?.error?.message;
-        this.error = msg ?? 'حدث خطأ، يرجى المحاولة مرة أخرى';
+        this.error = err?.error?.message ?? 'حدث خطأ، يرجى المحاولة مرة أخرى';
         this.loading = false;
       }
     });
@@ -84,7 +78,11 @@ export class StaffComponent {
     this.copied = false;
   }
 
+  /**
+   * Always returns to the dashboard of the currently committed activeRole.
+   * Never hardcodes a route — the same component works for Owner, BranchManager, etc.
+   */
   goBack(): void {
-    this.router.navigate(['/branch-manager']);
+    this.auth.goToDashboard();
   }
 }

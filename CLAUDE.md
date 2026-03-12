@@ -41,11 +41,14 @@ apps/api/
     Enums/              One file per enum
   DTOs/
     Auth/               AuthDtos.cs
+    Invites/            InviteDtos.cs
     Orders/             OrderDtos.cs
+    Users/              UserDtos.cs
   Services/
-    Interfaces/         ITokenService, IOrderService, IAuthService
+    Interfaces/         ITokenService, IOrderService, IAuthService, IInviteService
     AuthService.cs      Login, RegisterOwner, ActivateInvite
     TokenService.cs     JWT generation (includes branch_id, restaurant_id claims)
+    InviteService.cs    CreateInvite (Owner/BranchManager only)
     OrderService.cs     Mock in-memory orders (replace with DB later)
   Validators/
     Auth/               LoginRequestValidator, RegisterOwnerRequestValidator, ActivateInviteRequestValidator
@@ -60,17 +63,22 @@ apps/web/src/app/
   app.routes.ts
   app.config.ts
   core/
-    services/           auth.service.ts, api-client.service.ts, order.service.ts
-    guards/             auth.guard.ts
+    services/           auth.service.ts, api-client.service.ts, order.service.ts,
+                        invite.service.ts, user-management.service.ts
+    guards/             auth.guard.ts, select-role.guard.ts
   pages/
     login/              Phone + password login (dark brown hero, card-overlap layout)
     register/           Owner self-registration (topbar + card, two sections)
     activate/           Invite activation via ?token= query param (blue hero)
     cashier/            Order dashboard with card grid, loading/empty states
     coordinator/        Placeholder shell
-    branch-manager/     Placeholder shell
-    restaurant-manager/ Placeholder shell
+    branch-manager/     Dashboard with staff invite link
+      staff/            Invite employee form (shared with restaurant-manager/staff)
+    restaurant-manager/ Dashboard: stats cards, staff list, Owner-only manage-users card
+    owner/
+      users/            Owner-only: user list + slide-up panel for role add/remove
     driver/             Placeholder shell
+    select-role/        Multi-role picker (hero + role cards)
   shared/
     styles/
       _tokens.scss      Design tokens (colors, fonts, spacing, radii, shadows)
@@ -88,6 +96,7 @@ apps/web/src/app/
       loading-spinner/          ui-loading-spinner
       empty-state/              ui-empty-state (icon + message + optional action)
       success-modal/            ui-success-modal (icon, title, message, proceed output)
+      dashboard-layout/         ui-dashboard-layout (pageTitle, userName inputs; logoutClick output; ng-content)
 ```
 
 ## Authentication
@@ -99,7 +108,36 @@ Three entry points:
 - `POST /auth/register-owner` — owner self-registration (creates Restaurant + Branch + User)
 - `POST /auth/activate-invite` — staff activation via invite token (UserInvite.Id as GUID in ?token= query param)
 
-JWT contains: userId, role, fullName, branch_id (optional), restaurant_id (optional). Expires in 7 days.
+JWT contains: userId, **multiple role claims** (one per UserRole), fullName, branch_id (optional), restaurant_id (optional). Expires in 7 days.
+
+## Multi-role system
+
+Users can hold multiple roles via the `UserRoles` join table. Key rules:
+
+- `activeRole` in localStorage is the **sole source of truth** for current session context.
+- `roles[]` in localStorage is metadata only — never used for implicit navigation.
+- `auth.getActiveRole()` is the only way to determine the current dashboard context.
+- `auth.goToDashboard()` navigates to the dashboard of the committed `activeRole`. Use this for all "go back" actions inside pages — never hardcode a route.
+- `auth.redirectByRole()` is called once after login. If `activeRole` is committed it navigates directly; if not committed and multiple roles exist, it goes to `/select-role`.
+- `storeSession()` always clears `activeRole` on fresh login so the user must re-commit.
+
+Guards:
+- `authGuard` — redirects to `/login` if not authenticated; redirects to `/select-role` if multi-role user has no committed `activeRole`.
+- `selectRoleGuard` — blocks unauthenticated users; auto-redirects single-role users; shows picker for multi-role.
+
+## Staff invite system
+
+- `POST /invites` — `[Authorize(Roles = "Owner,BranchManager")]`, reads `restaurant_id` from JWT claim
+- Frontend: `StaffComponent` at `/branch-manager/staff` and `/restaurant-manager/staff` (same component, role-aware back navigation via `auth.goToDashboard()`)
+
+## Owner user management
+
+- `GET /users` — list all users in the same restaurant (`[Authorize(Roles = "Owner")]`)
+- `GET /users/{id}` — returns `UserDetailDto` with `roleEntries` array (includes role GUIDs for removal)
+- `POST /users/{id}/roles` — add a role (validates enum, prevents duplicate)
+- `DELETE /users/{id}/roles/{roleId}` — remove a role assignment (blocks removing last role)
+- Frontend: `/owner/users` — user list + slide-up detail panel with add/remove role controls
+- Restaurant-manager dashboard shows "Manage Users" card only when `activeRole === 'Owner'`
 
 ## Order lifecycle
 
@@ -154,6 +192,10 @@ Always use **relative paths** for `@use`. The `stylePreprocessorOptions.includeP
 @use 'tokens' as *;
 ```
 
+### Component style budget
+`angular.json` budget is set to `maximumWarning: 6kb, maximumError: 10kb` per component style.
+Full-featured page components (auth pages, owner-users) legitimately exceed the old 2kb warning threshold.
+
 ## Dev notes
 - Docker Desktop must be started manually before running the DB
 - API port is 5000 (configured in Properties/launchSettings.json)
@@ -163,3 +205,5 @@ Always use **relative paths** for `@use`. The `stylePreprocessorOptions.includeP
 - BCrypt work factor default (10) is used for password hashing
 - `ui-success-modal` is used on all three auth pages; it receives `icon`, `iconBg`, `title`,
   `message`, `actionLabel` inputs and emits `(proceed)` which triggers role-based navigation
+- When API exe is file-locked (already running), build to a temp dir: `dotnet build -o /tmp/api-build`
+- Never apply EF migrations while the API exe is running — use `docker exec <container> psql` with direct SQL as fallback
