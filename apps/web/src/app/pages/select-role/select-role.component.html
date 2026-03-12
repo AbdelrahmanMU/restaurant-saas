@@ -1,0 +1,31 @@
+<div class="page-shell">
+
+  <header class="topbar">
+    <div class="topbar-brand">
+      <h1 class="topbar-title">اختر دورك</h1>
+      <p class="topbar-sub" *ngIf="name">مرحباً، {{ name }}</p>
+    </div>
+    <button class="btn-logout" (click)="logout()">تسجيل الخروج</button>
+  </header>
+
+  <main class="page-content">
+    <p class="page-hint">
+      حسابك مرتبط بأكثر من دور. اختر الدور الذي تريد العمل به الآن.
+    </p>
+
+    <div class="roles-list">
+      <button
+        class="role-card"
+        *ngFor="let r of roleOptions"
+        (click)="select(r.value)">
+        <span class="role-icon">{{ r.icon }}</span>
+        <div class="role-text">
+          <span class="role-label">{{ r.label }}</span>
+          <span class="role-desc" *ngIf="r.description">{{ r.description }}</span>
+        </div>
+        <span class="role-arrow">&#8592;</span>
+      </button>
+    </div>
+  </main>
+
+</div>

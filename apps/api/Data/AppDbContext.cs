@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using RestaurantSaas.Api.Domain.Entities;
-using RestaurantSaas.Api.Domain.Enums;
 
 namespace RestaurantSaas.Api.Data;
 
@@ -9,6 +8,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Restaurant> Restaurants => Set<Restaurant>();
     public DbSet<Branch> Branches => Set<Branch>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<UserInvite> UserInvites => Set<UserInvite>();
     public DbSet<RestaurantSettings> RestaurantSettings => Set<RestaurantSettings>();
     public DbSet<Driver> Drivers => Set<Driver>();
@@ -44,7 +44,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasIndex(x => x.PhoneNumber).IsUnique();
             e.Property(x => x.PhoneNumber).HasMaxLength(20).IsRequired();
             e.Property(x => x.FullName).HasMaxLength(200);
+            e.HasMany(x => x.UserRoles).WithOne(r => r.User).HasForeignKey(r => r.UserId);
+        });
+
+        modelBuilder.Entity<UserRole>(e =>
+        {
+            e.HasKey(x => x.Id);
             e.Property(x => x.Role).HasConversion<string>();
+            // prevent duplicate role assignments for same user+role+branch
+            e.HasIndex(x => new { x.UserId, x.Role, x.BranchId }).IsUnique();
         });
 
         modelBuilder.Entity<UserInvite>(e =>

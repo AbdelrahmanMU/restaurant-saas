@@ -50,5 +50,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./pages/driver/driver.component').then(m => m.DriverComponent)
   },
+  {
+    path: 'select-role',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/select-role/select-role.component').then(m => m.SelectRoleComponent)
+  },
   { path: '**', redirectTo: 'login' }
 ];

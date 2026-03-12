@@ -12,7 +12,7 @@ public class TokenService(IConfiguration configuration) : ITokenService
     public string GenerateToken(
         Guid userId,
         string phoneNumber,
-        Role role,
+        IEnumerable<Role> roles,
         string fullName,
         Guid? branchId = null,
         Guid? restaurantId = null)
@@ -26,9 +26,12 @@ public class TokenService(IConfiguration configuration) : ITokenService
             new(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(ClaimTypes.MobilePhone, phoneNumber),
-            new(ClaimTypes.Role, role.ToString()),
             new(ClaimTypes.Name, fullName)
         };
+
+        // One ClaimTypes.Role claim per role — ASP.NET Core evaluates them with OR logic
+        foreach (var role in roles)
+            claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
 
         if (branchId.HasValue)
             claims.Add(new Claim("branch_id", branchId.Value.ToString()));

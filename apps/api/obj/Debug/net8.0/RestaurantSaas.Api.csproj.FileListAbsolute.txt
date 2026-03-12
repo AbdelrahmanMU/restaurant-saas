@@ -118,3 +118,11 @@ D:\Projects\restaurant-saas\apps\api\bin\Debug\net8.0\FluentValidation.AspNetCor
 D:\Projects\restaurant-saas\apps\api\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
 D:\Projects\restaurant-saas\apps\api\bin\Debug\net8.0\BCrypt.Net-Next.dll
 D:\Projects\restaurant-saas\apps\api\obj\Debug\net8.0\RestaurantSaas.Api.sourcelink.json
+C:\Users\Boda\AppData\Local\Temp\api-build\appsettings.Development.json
+C:\Users\Boda\AppData\Local\Temp\api-build\appsettings.json
+C:\Users\Boda\AppData\Local\Temp\api-build\RestaurantSaas.Api.staticwebassets.endpoints.json
+C:\Users\Boda\AppData\Local\Temp\api-build\RestaurantSaas.Api.exe
+C:\Users\Boda\AppData\Local\Temp\api-build\RestaurantSaas.Api.deps.json
+C:\Users\Boda\AppData\Local\Temp\api-build\RestaurantSaas.Api.runtimeconfig.json
+C:\Users\Boda\AppData\Local\Temp\api-build\RestaurantSaas.Api.dll
+C:\Users\Boda\AppData\Local\Temp\api-build\RestaurantSaas.Api.pdb

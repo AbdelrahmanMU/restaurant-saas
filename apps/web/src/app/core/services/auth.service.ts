@@ -5,7 +5,7 @@ import { ApiClientService } from './api-client.service';
 
 export interface LoginResponse {
   token: string;
-  role: string;
+  roles: string[];
   fullName: string;
   branchId: string | null;
   restaurantId: string | null;
@@ -24,6 +24,15 @@ export interface ActivateInviteRequest {
   phoneNumber: string;
   password: string;
 }
+
+const ROUTE_MAP: Record<string, string> = {
+  Cashier:           '/cashier',
+  Coordinator:       '/coordinator',
+  BranchManager:     '/branch-manager',
+  RestaurantManager: '/restaurant-manager',
+  Owner:             '/restaurant-manager',
+  Driver:            '/driver'
+};
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -56,32 +65,64 @@ export class AuthService {
     return !!localStorage.getItem('token');
   }
 
+  // Returns all roles assigned to this user
+  getRoles(): string[] {
+    const raw = localStorage.getItem('roles');
+    if (!raw) return [];
+    try { return JSON.parse(raw) as string[]; } catch { return []; }
+  }
+
+  // The role the user selected (or the only role if they have one)
+  getActiveRole(): string | null {
+    return localStorage.getItem('activeRole');
+  }
+
+  // Kept for backward compat with components that call getRole()
   getRole(): string | null {
-    return localStorage.getItem('role');
+    return this.getActiveRole() ?? this.getRoles()[0] ?? null;
   }
 
   getFullName(): string | null {
     return localStorage.getItem('fullName');
   }
 
+  hasRole(role: string): boolean {
+    return this.getRoles().includes(role);
+  }
+
+  setActiveRole(role: string): void {
+    localStorage.setItem('activeRole', role);
+  }
+
+  // After login / register / activate:
+  //   1 role  → set activeRole immediately, redirect to dashboard
+  //   >1 role → go to /select-role so user picks
   redirectByRole(): void {
-    const role = this.getRole();
-    const routeMap: Record<string, string> = {
-      Cashier: '/cashier',
-      Coordinator: '/coordinator',
-      BranchManager: '/branch-manager',
-      RestaurantManager: '/restaurant-manager',
-      Owner: '/restaurant-manager',
-      Driver: '/driver'
-    };
-    this.router.navigate([routeMap[role ?? ''] ?? '/login']);
+    const roles = this.getRoles();
+    if (roles.length === 1) {
+      this.setActiveRole(roles[0]);
+      this.navigateForRole(roles[0]);
+    } else if (roles.length > 1) {
+      this.router.navigate(['/select-role']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  navigateForRole(role: string): void {
+    this.router.navigate([ROUTE_MAP[role] ?? '/login']);
   }
 
   private storeSession(res: LoginResponse): void {
     localStorage.setItem('token', res.token);
-    localStorage.setItem('role', res.role);
+    localStorage.setItem('roles', JSON.stringify(res.roles));
     localStorage.setItem('fullName', res.fullName);
     if (res.branchId) localStorage.setItem('branchId', res.branchId);
     if (res.restaurantId) localStorage.setItem('restaurantId', res.restaurantId);
+
+    // Auto-set activeRole only when there's exactly one role
+    if (res.roles.length === 1) {
+      localStorage.setItem('activeRole', res.roles[0]);
+    }
   }
 }

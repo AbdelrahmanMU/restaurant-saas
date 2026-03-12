@@ -12,7 +12,9 @@ public class AuthService(AppDbContext db, ITokenService tokenService) : IAuthSer
 {
     public async Task<LoginResponse?> LoginAsync(LoginRequest request)
     {
-        var user = await db.Users.FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
+        var user = await db.Users
+            .Include(u => u.UserRoles)
+            .FirstOrDefaultAsync(u => u.PhoneNumber == request.PhoneNumber);
 
         if (user is null || string.IsNullOrEmpty(user.PasswordHash))
             return null;
@@ -20,12 +22,18 @@ public class AuthService(AppDbContext db, ITokenService tokenService) : IAuthSer
         if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             return null;
 
+        var roles = user.UserRoles.Select(r => r.Role).ToArray();
+
         var token = tokenService.GenerateToken(
-            user.Id, user.PhoneNumber, user.Role, user.FullName,
+            user.Id, user.PhoneNumber, roles, user.FullName,
             user.BranchId, user.RestaurantId);
 
-        return new LoginResponse(token, user.Role.ToString(), user.FullName,
-            user.BranchId, user.RestaurantId);
+        return new LoginResponse(
+            token,
+            roles.Select(r => r.ToString()).ToArray(),
+            user.FullName,
+            user.BranchId,
+            user.RestaurantId);
     }
 
     public async Task<(LoginResponse? Result, string? Error)> RegisterOwnerAsync(RegisterOwnerRequest request)
@@ -53,23 +61,39 @@ public class AuthService(AppDbContext db, ITokenService tokenService) : IAuthSer
             Id = Guid.NewGuid(),
             PhoneNumber = request.PhoneNumber,
             FullName = request.FullName,
-            Role = Role.Owner,
             RestaurantId = restaurant.Id,
             BranchId = branch.Id,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password)
         };
 
+        var userRole = new UserRole
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            Role = Role.Owner,
+            RestaurantId = restaurant.Id,
+            BranchId = branch.Id,
+            AssignedAt = DateTime.UtcNow
+        };
+
         db.Restaurants.Add(restaurant);
         db.Branches.Add(branch);
         db.Users.Add(user);
+        db.UserRoles.Add(userRole);
         await db.SaveChangesAsync();
 
+        var roles = new[] { Role.Owner };
+
         var token = tokenService.GenerateToken(
-            user.Id, user.PhoneNumber, user.Role, user.FullName,
+            user.Id, user.PhoneNumber, roles, user.FullName,
             user.BranchId, user.RestaurantId);
 
-        return (new LoginResponse(token, user.Role.ToString(), user.FullName,
-            user.BranchId, user.RestaurantId), null);
+        return (new LoginResponse(
+            token,
+            roles.Select(r => r.ToString()).ToArray(),
+            user.FullName,
+            user.BranchId,
+            user.RestaurantId), null);
     }
 
     public async Task<LoginResponse?> ActivateInviteAsync(ActivateInviteRequest request)
@@ -93,22 +117,38 @@ public class AuthService(AppDbContext db, ITokenService tokenService) : IAuthSer
             Id = Guid.NewGuid(),
             PhoneNumber = invite.PhoneNumber,
             FullName = request.FullName,
-            Role = invite.Role,
             BranchId = invite.BranchId,
             RestaurantId = invite.RestaurantId,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password)
         };
 
+        var userRole = new UserRole
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            Role = invite.Role,
+            RestaurantId = invite.RestaurantId,
+            BranchId = invite.BranchId,
+            AssignedAt = DateTime.UtcNow
+        };
+
         invite.IsAccepted = true;
         db.Users.Add(user);
+        db.UserRoles.Add(userRole);
         await db.SaveChangesAsync();
 
+        var roles = new[] { invite.Role };
+
         var token = tokenService.GenerateToken(
-            user.Id, user.PhoneNumber, user.Role, user.FullName,
+            user.Id, user.PhoneNumber, roles, user.FullName,
             user.BranchId, user.RestaurantId);
 
-        return new LoginResponse(token, user.Role.ToString(), user.FullName,
-            user.BranchId, user.RestaurantId);
+        return new LoginResponse(
+            token,
+            roles.Select(r => r.ToString()).ToArray(),
+            user.FullName,
+            user.BranchId,
+            user.RestaurantId);
     }
 
     private static string GenerateSlug(string name)

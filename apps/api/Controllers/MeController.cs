@@ -20,7 +20,10 @@ public class MeController(AppDbContext db) : ControllerBase
         if (userIdStr is null || !Guid.TryParse(userIdStr, out var userId))
             return Unauthorized();
 
-        var user = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        var user = await db.Users
+            .Include(u => u.UserRoles)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
         if (user is null) return NotFound();
 
         return Ok(new
@@ -28,7 +31,7 @@ public class MeController(AppDbContext db) : ControllerBase
             user.Id,
             user.FullName,
             user.PhoneNumber,
-            Role = user.Role.ToString(),
+            Roles = user.UserRoles.Select(r => r.Role.ToString()).ToArray(),
             user.BranchId,
             user.RestaurantId
         });

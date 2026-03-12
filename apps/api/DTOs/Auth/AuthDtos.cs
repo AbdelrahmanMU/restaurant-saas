@@ -4,7 +4,7 @@ public record LoginRequest(string PhoneNumber, string Password);
 
 public record LoginResponse(
     string Token,
-    string Role,
+    string[] Roles,
     string FullName,
     Guid? BranchId,
     Guid? RestaurantId

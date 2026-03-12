@@ -7,7 +7,7 @@ public interface ITokenService
     string GenerateToken(
         Guid userId,
         string phoneNumber,
-        Role role,
+        IEnumerable<Role> roles,
         string fullName,
         Guid? branchId = null,
         Guid? restaurantId = null);
