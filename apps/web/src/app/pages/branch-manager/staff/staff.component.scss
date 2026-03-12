@@ -1,0 +1,268 @@
+@use '../../../shared/styles/tokens' as *;
+
+// ─── Shell ────────────────────────────────────────────────────────────────────
+.page-shell {
+  min-height: 100dvh;
+  background: $linen;
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+}
+
+// ─── Top bar ──────────────────────────────────────────────────────────────────
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-4 $space-4;
+  background: $surface;
+  border-bottom: 1px solid $border;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar-title {
+  font-family: $font-display;
+  font-size: 18px;
+  font-weight: 600;
+  color: $clay;
+  flex: 1;
+  text-align: center;
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: $linen;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: $clay;
+  transition: background $transition-fast;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active { transform: scale(0.93); }
+}
+
+.btn-logout {
+  background: rgba($status-cancelled, 0.08);
+  color: $status-cancelled;
+  font-size: 14px;
+}
+
+// ─── Content ──────────────────────────────────────────────────────────────────
+.page-content {
+  flex: 1;
+  padding: $space-6 $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+.card {
+  background: $surface;
+  border-radius: $radius-xl;
+  padding: $space-6;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.card-hint {
+  font-size: 14px;
+  color: $text-secondary;
+  text-align: right;
+  line-height: 1.6;
+  margin: 0;
+}
+
+// ─── Form ─────────────────────────────────────────────────────────────────────
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: 14px;
+    font-weight: 500;
+    color: $clay;
+    text-align: right;
+  }
+}
+
+.input-field {
+  width: 100%;
+  height: 56px;
+  padding: 0 $space-4;
+  border-radius: $radius-input;
+  border: 1.5px solid $border;
+  background: $cream;
+  font-family: $font-body;
+  font-size: 16px;
+  color: $clay;
+  text-align: right;
+  direction: rtl;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+  appearance: none;
+  -webkit-appearance: none;
+
+  &::placeholder { color: $muted; }
+
+  &:focus {
+    border-color: $mahogany;
+    background: $surface;
+    box-shadow: 0 0 0 3px rgba($mahogany, 0.10);
+  }
+}
+
+.input-ltr {
+  direction: ltr;
+  text-align: left;
+  letter-spacing: 0.5px;
+}
+
+// ─── Error ────────────────────────────────────────────────────────────────────
+.auth-error {
+  background: rgba($status-cancelled, 0.08);
+  color: darken($status-cancelled, 5%);
+  border: 1px solid rgba($status-cancelled, 0.22);
+  border-radius: $radius-sm;
+  padding: 12px $space-4;
+  font-size: 14px;
+  text-align: center;
+}
+
+// ─── Buttons ─────────────────────────────────────────────────────────────────
+.auth-btn {
+  width: 100%;
+  height: 56px;
+  border-radius: $radius-button;
+  border: none;
+  font-family: $font-body;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+
+  &:active:not(:disabled) { transform: scale(0.97); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+}
+
+.auth-btn-primary {
+  background: $mahogany;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba($mahogany, 0.30);
+
+  &:hover:not(:disabled) {
+    background: $mahogany-dk;
+    box-shadow: 0 6px 20px rgba($mahogany, 0.38);
+  }
+}
+
+.auth-btn-secondary {
+  background: transparent;
+  color: $mahogany;
+  border: 1.5px solid $border !important;
+
+  &:hover:not(:disabled) {
+    background: rgba($mahogany, 0.05);
+    border-color: $amber !important;
+  }
+}
+
+.btn-spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ─── Success card ─────────────────────────────────────────────────────────────
+.success-card {
+  text-align: center;
+  gap: $space-4;
+}
+
+.success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba($status-ready, 0.12);
+  color: $status-ready;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.success-title {
+  font-family: $font-display;
+  font-size: 20px;
+  font-weight: 600;
+  color: $clay;
+  margin: 0;
+}
+
+.success-msg {
+  font-size: 14px;
+  color: $text-secondary;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.link-box {
+  background: $cream;
+  border: 1.5px solid $border;
+  border-radius: $radius-input;
+  padding: $space-3 $space-4;
+  overflow: hidden;
+}
+
+.link-text-display {
+  font-size: 13px;
+  color: $mahogany;
+  word-break: break-all;
+  direction: ltr;
+  text-align: left;
+  display: block;
+}
+
+.copy-btn {
+  margin-top: 0;
+}
+
+.expiry-note {
+  font-size: 12px;
+  color: $text-muted;
+  margin: 0;
+}

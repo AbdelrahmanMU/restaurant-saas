@@ -1,5 +1,18 @@
-<div class="container">
-  <h1>لوحة مدير الفرع</h1>
-  <p>مرحباً {{ name }}</p>
-  <button (click)="auth.logout()">تسجيل الخروج</button>
+<div class="page-shell">
+  <header class="topbar">
+    <h1 class="topbar-title">لوحة مدير الفرع</h1>
+    <button class="btn-logout" (click)="auth.logout()">خروج</button>
+  </header>
+
+  <main class="page-content">
+    <p class="welcome">مرحباً {{ name }}</p>
+
+    <div class="menu-grid">
+      <a class="menu-card" [routerLink]="['/branch-manager/staff']">
+        <span class="menu-icon">&#128101;</span>
+        <span class="menu-label">إدارة الموظفين</span>
+        <span class="menu-sub">دعوة وتفعيل الحسابات</span>
+      </a>
+    </div>
+  </main>
 </div>

@@ -31,9 +31,19 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/branch-manager/branch-manager.component').then(m => m.BranchManagerComponent)
   },
   {
+    path: 'branch-manager/staff',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/branch-manager/staff/staff.component').then(m => m.StaffComponent)
+  },
+  {
     path: 'restaurant-manager',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/restaurant-manager/restaurant-manager.component').then(m => m.RestaurantManagerComponent)
+  },
+  {
+    path: 'restaurant-manager/staff',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/branch-manager/staff/staff.component').then(m => m.StaffComponent)
   },
   {
     path: 'driver',

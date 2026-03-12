@@ -1,3 +1,91 @@
-.container {
-  padding: 2rem;
+@use '../../shared/styles/tokens' as *;
+
+.page-shell {
+  min-height: 100dvh;
+  background: $linen;
+  direction: rtl;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-4;
+  background: $surface;
+  border-bottom: 1px solid $border;
+}
+
+.topbar-title {
+  font-family: $font-display;
+  font-size: 18px;
+  font-weight: 600;
+  color: $clay;
+}
+
+.btn-logout {
+  padding: 8px 16px;
+  border-radius: $radius-button;
+  border: 1.5px solid $border;
+  background: transparent;
+  color: $mahogany;
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:hover { background: rgba($mahogany, 0.05); }
+}
+
+.page-content {
+  padding: $space-6 $space-4;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.welcome {
+  font-size: 15px;
+  color: $text-secondary;
+  margin-bottom: $space-6;
+  text-align: right;
+}
+
+.menu-grid {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.menu-card {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  background: $surface;
+  border-radius: $radius-card;
+  padding: $space-4 $space-5;
+  box-shadow: $shadow-card;
+  text-decoration: none;
+  transition: box-shadow $transition-base, transform $transition-base;
+
+  &:active { transform: scale(0.98); }
+  &:hover { box-shadow: $shadow-lg; }
+}
+
+.menu-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.menu-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: $clay;
+  display: block;
+}
+
+.menu-sub {
+  font-size: 13px;
+  color: $text-muted;
+  display: block;
+  margin-top: 2px;
 }

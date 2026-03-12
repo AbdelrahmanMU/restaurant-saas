@@ -1,0 +1,80 @@
+<div class="page-shell">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <button class="btn-icon" (click)="goBack()" aria-label="رجوع">&#8594;</button>
+    <h1 class="topbar-title">دعوة موظف</h1>
+    <button class="btn-icon btn-logout" (click)="auth.logout()" aria-label="تسجيل الخروج">&#x2715;</button>
+  </header>
+
+  <main class="page-content">
+
+    <!-- Invite form card -->
+    <div class="card" *ngIf="!result">
+      <p class="card-hint">أدخل رقم هاتف الموظف واختر دوره، سيتم إنشاء رابط تفعيل لمشاركته.</p>
+
+      <div class="form-stack">
+
+        <!-- Phone -->
+        <div class="input-group">
+          <label for="phone">رقم الهاتف</label>
+          <input
+            id="phone"
+            class="input-field input-ltr"
+            type="tel"
+            placeholder="05xxxxxxxx"
+            [(ngModel)]="phoneNumber"
+            autocomplete="tel"
+            inputmode="tel" />
+        </div>
+
+        <!-- Role -->
+        <div class="input-group">
+          <label for="role">الدور الوظيفي</label>
+          <select id="role" class="input-field" [(ngModel)]="selectedRole">
+            <option value="" disabled>اختر الدور...</option>
+            <option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</option>
+          </select>
+        </div>
+
+        <!-- Error -->
+        <div class="auth-error" *ngIf="error">{{ error }}</div>
+
+        <!-- Submit -->
+        <button
+          class="auth-btn auth-btn-primary"
+          (click)="sendInvite()"
+          [disabled]="!canSubmit">
+          <span class="btn-spinner" *ngIf="loading"></span>
+          <span *ngIf="!loading">إنشاء رابط الدعوة</span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Success card -->
+    <div class="card success-card" *ngIf="result">
+      <div class="success-icon">&#10003;</div>
+      <h2 class="success-title">تمّت الدعوة بنجاح!</h2>
+      <p class="success-msg">شارك الرابط التالي مع الموظف ليُكمل تفعيل حسابه</p>
+
+      <div class="link-box">
+        <span class="link-text-display">{{ result.activationLink }}</span>
+      </div>
+
+      <button class="auth-btn auth-btn-primary copy-btn" (click)="copyLink()">
+        <span *ngIf="!copied">نسخ الرابط</span>
+        <span *ngIf="copied">&#10003; تم النسخ</span>
+      </button>
+
+      <p class="expiry-note">
+        صالح حتى: {{ result.expiresAt | date: 'yyyy/MM/dd' }}
+      </p>
+
+      <button class="auth-btn auth-btn-secondary" (click)="reset()">
+        دعوة موظف آخر
+      </button>
+    </div>
+
+  </main>
+</div>

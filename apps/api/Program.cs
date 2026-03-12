@@ -70,6 +70,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IInviteService, InviteService>();
 
 // CORS (allow Angular dev server)
 builder.Services.AddCors(options =>

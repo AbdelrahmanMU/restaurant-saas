@@ -117,3 +117,4 @@ D:\Projects\restaurant-saas\apps\api\bin\Debug\net8.0\FluentValidation.dll
 D:\Projects\restaurant-saas\apps\api\bin\Debug\net8.0\FluentValidation.AspNetCore.dll
 D:\Projects\restaurant-saas\apps\api\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
 D:\Projects\restaurant-saas\apps\api\bin\Debug\net8.0\BCrypt.Net-Next.dll
+D:\Projects\restaurant-saas\apps\api\obj\Debug\net8.0\RestaurantSaas.Api.sourcelink.json

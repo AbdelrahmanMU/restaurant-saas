@@ -1,3 +1,183 @@
-.container {
-  padding: 2rem;
+@use '../../shared/styles/tokens' as *;
+
+// ─── Section ──────────────────────────────────────────────────────────────────
+.section {
+  margin-bottom: $space-8;
+}
+
+.section-title {
+  font-family: $font-display;
+  font-size: 16px;
+  font-weight: 600;
+  color: $clay;
+  margin: 0 0 $space-4;
+  text-align: right;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-bottom: $space-4;
+
+  .section-title { margin-bottom: 0; }
+}
+
+// ─── Stats grid (2×2 on mobile) ───────────────────────────────────────────────
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3;
+}
+
+.stat-card {
+  background: $surface;
+  border-radius: $radius-card;
+  padding: $space-5 $space-4;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: $space-1;
+  position: relative;
+  overflow: hidden;
+
+  // Colored top accent bar driven by CSS var
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent, #{$mahogany});
+    border-radius: $radius-card $radius-card 0 0;
+  }
+}
+
+.stat-icon {
+  font-size: 24px;
+  line-height: 1;
+  margin-bottom: $space-1;
+}
+
+.stat-value {
+  font-family: $font-display;
+  font-size: 28px;
+  font-weight: 700;
+  color: $clay;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: $text-muted;
+  font-weight: 400;
+}
+
+// ─── Invite button ────────────────────────────────────────────────────────────
+.btn-invite {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  height: 40px;
+  padding: 0 $space-4;
+  border-radius: $radius-button;
+  border: none;
+  background: $mahogany;
+  color: #fff;
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba($mahogany, 0.28);
+  transition: background $transition-fast, box-shadow $transition-fast;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover { background: $mahogany-dk; }
+  &:active { transform: scale(0.97); }
+}
+
+.btn-invite-icon {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+// ─── Staff list ───────────────────────────────────────────────────────────────
+.staff-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.staff-card {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  background: $surface;
+  border-radius: $radius-card;
+  padding: $space-3 $space-4;
+  box-shadow: $shadow-sm;
+  border: 1px solid $border;
+}
+
+.staff-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: $linen;
+  border: 1.5px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-display;
+  font-size: 18px;
+  font-weight: 600;
+  color: $mahogany;
+  flex-shrink: 0;
+}
+
+.staff-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  text-align: right;
+}
+
+.staff-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: $clay;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.staff-role {
+  font-size: 12px;
+  color: $text-muted;
+}
+
+// ─── Status badge ─────────────────────────────────────────────────────────────
+.staff-badge {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: $radius-badge;
+}
+
+.badge-active {
+  background: rgba($status-ready, 0.12);
+  color: darken($status-ready, 8%);
+}
+
+.badge-pending {
+  background: rgba($status-pending, 0.12);
+  color: darken($status-pending, 8%);
 }

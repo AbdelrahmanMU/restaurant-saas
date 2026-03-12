@@ -3,7 +3,8 @@
     "allow": [
       "Bash(dotnet:*)",
       "Bash(npx:*)",
-      "Bash(docker compose:*)"
+      "Bash(docker compose:*)",
+      "Bash(npm run:*)"
     ]
   }
 }

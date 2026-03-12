@@ -1,5 +1,48 @@
-<div class="container">
-  <h1>لوحة مدير المطعم</h1>
-  <p>مرحباً {{ name }}</p>
-  <button (click)="auth.logout()">تسجيل الخروج</button>
-</div>
+<ui-dashboard-layout
+  pageTitle="لوحة مدير المطعم"
+  [userName]="name"
+  (logoutClick)="auth.logout()">
+
+  <!-- ── Summary stats ──────────────────────────────────────── -->
+  <section class="section">
+    <h2 class="section-title">إحصائيات سريعة</h2>
+
+    <div class="stats-grid">
+      <div class="stat-card" *ngFor="let s of stats"
+           [style.--accent]="s.accent">
+        <span class="stat-icon">{{ s.icon }}</span>
+        <span class="stat-value">{{ s.value }}</span>
+        <span class="stat-label">{{ s.label }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Staff management ───────────────────────────────────── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">إدارة الموظفين</h2>
+      <button class="btn-invite" (click)="inviteStaff()">
+        <span class="btn-invite-icon">+</span>
+        دعوة موظف جديد
+      </button>
+    </div>
+
+    <div class="staff-list">
+      <div class="staff-card" *ngFor="let member of staff">
+        <div class="staff-avatar">
+          {{ member.name.charAt(0) }}
+        </div>
+        <div class="staff-info">
+          <span class="staff-name">{{ member.name }}</span>
+          <span class="staff-role">{{ member.role }}</span>
+        </div>
+        <span class="staff-badge"
+              [class.badge-active]="member.status === 'active'"
+              [class.badge-pending]="member.status === 'pending'">
+          {{ member.status === 'active' ? 'نشط' : 'في الانتظار' }}
+        </span>
+      </div>
+    </div>
+  </section>
+
+</ui-dashboard-layout>

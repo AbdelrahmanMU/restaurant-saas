@@ -1,0 +1,13 @@
+<div class="layout-shell">
+  <header class="layout-header">
+    <div class="header-brand">
+      <h1 class="header-title">{{ pageTitle }}</h1>
+      <p class="header-sub" *ngIf="userName">مرحباً، {{ userName }}</p>
+    </div>
+    <button class="btn-logout" (click)="logoutClick.emit()">تسجيل الخروج</button>
+  </header>
+
+  <main class="layout-main">
+    <ng-content></ng-content>
+  </main>
+</div>
