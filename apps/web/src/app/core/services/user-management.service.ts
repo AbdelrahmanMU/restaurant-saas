@@ -33,12 +33,18 @@ export interface AddRoleRequest {
   branchId?: string | null;
 }
 
+/** Shape returned by GET /users */
+export interface UsersListResponse {
+  manageable: UserSummary[];
+  managers: UserSummary[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class UserManagementService {
   constructor(private api: ApiClientService) {}
 
-  getUsers(): Observable<UserSummary[]> {
-    return this.api.get<UserSummary[]>('/users');
+  getUsers(): Observable<UsersListResponse> {
+    return this.api.get<UsersListResponse>('/users');
   }
 
   getUser(id: string): Observable<UserDetail> {

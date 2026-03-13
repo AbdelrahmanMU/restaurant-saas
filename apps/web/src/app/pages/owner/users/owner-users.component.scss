@@ -98,6 +98,28 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 
 // ─── Users list ───────────────────────────────────────────────────────────────
+.list-section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.managers-section {
+  margin-top: $space-6;
+  padding-top: $space-6;
+  border-top: 1.5px dashed $border;
+}
+
+.list-heading {
+  font-family: $font-display;
+  font-size: 14px;
+  font-weight: 600;
+  color: $muted;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin: 0 0 $space-2;
+}
+
 .users-list {
   display: flex;
   flex-direction: column;
@@ -118,6 +140,17 @@
   &:hover {
     border-color: $mahogany;
     box-shadow: $shadow-sm;
+  }
+}
+
+// Read-only row — no hover interaction
+.user-row-readonly {
+  cursor: default;
+  opacity: 0.75;
+
+  &:hover {
+    border-color: $border;
+    box-shadow: none;
   }
 }
 
@@ -176,6 +209,16 @@
   padding: 2px 8px;
   border-radius: 20px;
   white-space: nowrap;
+}
+
+.role-chip-manager {
+  background: rgba($muted, 0.1);
+  color: $muted;
+}
+
+.user-avatar-manager {
+  background: rgba($muted, 0.1);
+  color: $muted;
 }
 
 .chevron {
@@ -296,6 +339,12 @@
   font-size: 15px;
   font-weight: 500;
   color: $clay;
+}
+
+.role-lock {
+  font-size: 14px;
+  opacity: 0.4;
+  margin-inline-start: auto;
 }
 
 .btn-remove {

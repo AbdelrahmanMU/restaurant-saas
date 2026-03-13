@@ -24,13 +24,25 @@ export class StaffComponent {
   result: CreateInviteResponse | null = null;
   copied = false;
 
-  readonly roles: RoleOption[] = [
+  // Role hierarchy: lower number = higher authority. Owner excluded — it is system-only.
+  private readonly allRoles: RoleOption[] = [
+    { value: 'RestaurantManager', label: 'مدير مطعم' },
+    { value: 'BranchManager',     label: 'مدير فرع' },
     { value: 'Cashier',           label: 'كاشير' },
     { value: 'Coordinator',       label: 'منسّق' },
-    { value: 'BranchManager',     label: 'مدير فرع' },
-    { value: 'RestaurantManager', label: 'مدير مطعم' },
     { value: 'Driver',            label: 'سائق' }
   ];
+
+  private readonly roleLevel: Record<string, number> = {
+    Owner: 0, RestaurantManager: 1, BranchManager: 2,
+    Cashier: 3, Coordinator: 3, Driver: 3
+  };
+
+  /** Only roles strictly below the caller's level are shown */
+  get roles(): RoleOption[] {
+    const callerLevel = this.roleLevel[this.auth.getActiveRole() ?? ''] ?? 99;
+    return this.allRoles.filter(r => (this.roleLevel[r.value] ?? 99) > callerLevel);
+  }
 
   constructor(
     private inviteService: InviteService,

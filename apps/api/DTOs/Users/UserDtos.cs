@@ -30,3 +30,11 @@ public record AddRoleRequest(
     string Role,
     Guid? BranchId = null
 );
+
+/// <summary>
+/// Returned by GET /users. Manageable = caller can edit. Managers = read-only superiors.
+/// </summary>
+public record UsersListDto(
+    UserSummaryDto[] Manageable,
+    UserSummaryDto[] Managers
+);

@@ -17,8 +17,8 @@
     </div>
   </section>
 
-  <!-- ── Owner-only: manage users ──────────────────────────── -->
-  <section class="section" *ngIf="isOwner">
+  <!-- ── Owner / RestaurantManager: manage users ───────────── -->
+  <section class="section" *ngIf="canManageUsers">
     <button class="btn-manage-users" (click)="manageUsers()">
       <span class="btn-manage-icon">👥</span>
       <span class="btn-manage-text">

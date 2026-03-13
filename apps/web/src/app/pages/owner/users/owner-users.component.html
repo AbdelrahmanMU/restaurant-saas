@@ -18,26 +18,52 @@
     <!-- Error -->
     <div class="error-box" *ngIf="error && !loading">{{ error }}</div>
 
-    <!-- Users list -->
-    <div class="users-list" *ngIf="!loading && !error">
-      <div class="user-row" *ngFor="let u of users" (click)="openUser(u)">
-        <div class="user-avatar">{{ u.fullName.charAt(0) }}</div>
-        <div class="user-info">
-          <span class="user-name">{{ u.fullName }}</span>
-          <span class="user-phone">{{ u.phoneNumber }}</span>
+    <ng-container *ngIf="!loading && !error">
+
+      <!-- ── Manageable employees ───────────────────────────────── -->
+      <div class="list-section">
+        <h2 class="list-heading" *ngIf="managers.length > 0">فريقك</h2>
+
+        <div class="users-list">
+          <div class="user-row" *ngFor="let u of manageable" (click)="openUser(u)">
+            <div class="user-avatar">{{ u.fullName.charAt(0) }}</div>
+            <div class="user-info">
+              <span class="user-name">{{ u.fullName }}</span>
+              <span class="user-phone">{{ u.phoneNumber }}</span>
+            </div>
+            <div class="user-roles">
+              <span class="role-chip" *ngFor="let r of u.roles">{{ roleLabel(r) }}</span>
+            </div>
+            <span class="chevron">&#8592;</span>
+          </div>
+
+          <div class="empty-note" *ngIf="manageable.length === 0">لا يوجد موظفون بعد</div>
         </div>
-        <div class="user-roles">
-          <span class="role-chip" *ngFor="let r of u.roles">{{ roleLabel(r) }}</span>
-        </div>
-        <span class="chevron">&#8592;</span>
       </div>
 
-      <div class="empty-note" *ngIf="users.length === 0">لا يوجد موظفون بعد</div>
-    </div>
+      <!-- ── Managers (read-only) ────────────────────────────────── -->
+      <div class="list-section managers-section" *ngIf="managers.length > 0">
+        <h2 class="list-heading">مديروك</h2>
+
+        <div class="users-list">
+          <div class="user-row user-row-readonly" *ngFor="let u of managers">
+            <div class="user-avatar user-avatar-manager">{{ u.fullName.charAt(0) }}</div>
+            <div class="user-info">
+              <span class="user-name">{{ u.fullName }}</span>
+              <span class="user-phone">{{ u.phoneNumber }}</span>
+            </div>
+            <div class="user-roles">
+              <span class="role-chip role-chip-manager" *ngFor="let r of u.roles">{{ roleLabel(r) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
 
   </main>
 
-  <!-- Slide-up detail panel -->
+  <!-- Slide-up detail panel (manageable employees only) -->
   <div class="panel-overlay" *ngIf="selectedDetail !== null || detailLoading" (click)="closePanel()"></div>
 
   <div class="detail-panel" *ngIf="selectedDetail !== null || detailLoading">
@@ -63,14 +89,21 @@
         <div class="role-list">
           <div class="role-entry" *ngFor="let re of selectedDetail.roleEntries">
             <span class="role-entry-label">{{ roleLabel(re.role) }}</span>
-            <button
-              class="btn-remove"
-              (click)="removeRole(re.id)"
-              [disabled]="removingRoleId === re.id || selectedDetail.roleEntries.length <= 1"
-              aria-label="حذف الدور">
-              <span *ngIf="removingRoleId === re.id" class="mini-spinner"></span>
-              <span *ngIf="removingRoleId !== re.id">&#10005;</span>
-            </button>
+            <!-- Owner role: locked, never removable -->
+            <span *ngIf="re.role === 'Owner'" class="role-lock" aria-label="دور محمي">&#128274;</span>
+            <!-- Other roles: removable only if caller has authority over that role level -->
+            <ng-container *ngIf="re.role !== 'Owner'">
+              <button
+                *ngIf="canRemoveRole(re.role)"
+                class="btn-remove"
+                (click)="removeRole(re.id)"
+                [disabled]="removingRoleId === re.id || selectedDetail.roleEntries.length <= 1"
+                aria-label="حذف الدور">
+                <span *ngIf="removingRoleId === re.id" class="mini-spinner"></span>
+                <span *ngIf="removingRoleId !== re.id">&#10005;</span>
+              </button>
+              <span *ngIf="!canRemoveRole(re.role)" class="role-lock" aria-label="دور محمي">&#128274;</span>
+            </ng-container>
           </div>
           <p class="hint-text" *ngIf="selectedDetail.roleEntries.length <= 1">
             لا يمكن حذف الدور الوحيد
@@ -78,8 +111,8 @@
         </div>
       </section>
 
-      <!-- Add role -->
-      <section class="panel-section" (click)="$event.stopPropagation()">
+      <!-- Add role (only shown if there are assignable options) -->
+      <section class="panel-section" *ngIf="roleOptions.length > 0" (click)="$event.stopPropagation()">
         <h3 class="panel-section-title">إضافة دور</h3>
         <div class="add-role-row">
           <select class="input-field" [(ngModel)]="addRoleValue">
