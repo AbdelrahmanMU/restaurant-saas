@@ -71,6 +71,12 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IInviteService, InviteService>();
+builder.Services.AddScoped<IBranchService, BranchService>();
+builder.Services.AddScoped<IMenuSectionService, MenuSectionService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IModifierGroupService, ModifierGroupService>();
+builder.Services.AddScoped<IBundleService, BundleService>();
+builder.Services.AddScoped<IBranchAvailabilityService, BranchAvailabilityService>();
 
 // CORS (allow Angular dev server)
 builder.Services.AddCors(options =>

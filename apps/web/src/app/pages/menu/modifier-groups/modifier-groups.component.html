@@ -1,0 +1,252 @@
+<div class="page-shell">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <button class="btn-icon" (click)="auth.goToDashboard()" aria-label="رجوع">&#8594;</button>
+    <h1 class="topbar-title">مجموعات الإضافات</h1>
+    <button class="btn-new" (click)="openCreate()">+ مجموعة جديدة</button>
+  </header>
+
+  <main class="page-content">
+
+    <!-- Loading -->
+    <div class="state-box" *ngIf="loading">
+      <span class="spinner"></span>
+      <span>جارٍ التحميل…</span>
+    </div>
+
+    <!-- Error -->
+    <div class="error-box" *ngIf="error && !loading">{{ error }}</div>
+
+    <!-- Groups lists -->
+    <ng-container *ngIf="!loading && !error">
+
+      <!-- Active -->
+      <section class="list-section">
+        <h2 class="list-heading">المجموعات النشطة ({{ activeGroups.length }})</h2>
+
+        <div class="groups-list" *ngIf="activeGroups.length > 0; else emptyActive">
+          <div
+            class="group-row"
+            *ngFor="let g of activeGroups"
+            (click)="openEdit(g)">
+            <div class="group-main">
+              <div class="group-header">
+                <span class="group-name">{{ g.name }}</span>
+                <span class="selection-chip" [class.chip-single]="g.selectionType === 'Single'" [class.chip-multiple]="g.selectionType === 'Multiple'">
+                  {{ g.selectionType === 'Single' ? 'فردي' : 'متعدد' }}
+                </span>
+                <span class="required-badge" *ngIf="g.isRequired">إلزامي</span>
+              </div>
+              <div class="group-meta">
+                <span class="option-count">{{ g.options.length }} خيار</span>
+                <span class="group-branch" *ngIf="isOwnerOrManager && g.branchName">{{ g.branchName }}</span>
+              </div>
+            </div>
+            <span class="chevron">&#8592;</span>
+          </div>
+        </div>
+
+        <ng-template #emptyActive>
+          <p class="empty-note">لا توجد مجموعات إضافات نشطة</p>
+        </ng-template>
+      </section>
+
+      <!-- Inactive -->
+      <section class="list-section" *ngIf="inactiveGroups.length > 0">
+        <h2 class="list-heading list-heading-muted">غير نشطة ({{ inactiveGroups.length }})</h2>
+        <div class="groups-list">
+          <div
+            class="group-row group-inactive"
+            *ngFor="let g of inactiveGroups"
+            (click)="openEdit(g)">
+            <div class="group-main">
+              <span class="group-name">{{ g.name }}</span>
+              <span class="group-branch" *ngIf="isOwnerOrManager && g.branchName">{{ g.branchName }}</span>
+            </div>
+            <span class="chevron">&#8592;</span>
+          </div>
+        </div>
+      </section>
+
+    </ng-container>
+
+  </main>
+
+  <!-- ── Panel overlay ──────────────────────────────────────────────────────── -->
+  <div class="panel-overlay" *ngIf="panelMode" (click)="closePanel()"></div>
+
+  <!-- ── Slide-up panel ─────────────────────────────────────────────────────── -->
+  <div class="detail-panel" *ngIf="panelMode">
+    <div class="panel-handle"></div>
+
+    <div class="panel-title-row" (click)="$event.stopPropagation()">
+      <h2 class="panel-title">{{ panelMode === 'create' ? 'مجموعة جديدة' : 'تعديل المجموعة' }}</h2>
+    </div>
+
+    <!-- ── Group form ───────────────────────────────────────────────────────── -->
+    <section class="panel-section" (click)="$event.stopPropagation()">
+      <div class="form-stack">
+
+        <!-- Branch selector (Owner/Manager, create mode) -->
+        <div class="field-group" *ngIf="isOwnerOrManager && panelMode === 'create'">
+          <label class="field-label">الفرع *</label>
+          <select class="input-field" [(ngModel)]="formBranchId" [disabled]="branchesLoading">
+            <option value="" disabled>اختر الفرع…</option>
+            <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
+          </select>
+        </div>
+
+        <!-- Branch name (read-only, edit mode) -->
+        <div class="field-group branch-info" *ngIf="isOwnerOrManager && panelMode === 'edit' && selected?.branchName">
+          <span class="field-label">الفرع</span>
+          <span class="branch-label">{{ selected!.branchName }}</span>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">اسم المجموعة *</label>
+          <input class="input-field" type="text" [(ngModel)]="formName" placeholder="مثال: حجم المشروب" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">نوع الاختيار</label>
+          <select class="input-field" [(ngModel)]="formSelectionType">
+            <option value="Single">فردي</option>
+            <option value="Multiple">متعدد</option>
+          </select>
+        </div>
+
+        <div class="field-group checkbox-row">
+          <input type="checkbox" id="isRequired" [(ngModel)]="formIsRequired" class="checkbox-input" />
+          <label for="isRequired" class="checkbox-label">إلزامي</label>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">الحد الأدنى للاختيارات</label>
+          <input class="input-field" type="number" [(ngModel)]="formMinSelections" min="0" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">الحد الأقصى للاختيارات (اختياري)</label>
+          <input class="input-field" type="number" [(ngModel)]="formMaxSelections" min="1" placeholder="بلا حد" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">ترتيب العرض</label>
+          <input class="input-field" type="number" [(ngModel)]="formSortOrder" min="0" />
+        </div>
+
+        <!-- Status toggle (edit only) -->
+        <div class="field-group toggle-row" *ngIf="panelMode === 'edit'">
+          <span class="field-label">الحالة</span>
+          <button
+            class="toggle-btn"
+            [class.toggle-on]="formIsActive"
+            [class.toggle-off]="!formIsActive"
+            (click)="formIsActive = !formIsActive"
+            type="button">
+            {{ formIsActive ? 'نشط' : 'غير نشط' }}
+          </button>
+        </div>
+
+        <div class="error-box small-error" *ngIf="formError">{{ formError }}</div>
+
+        <button
+          class="btn-primary"
+          (click)="submit()"
+          [disabled]="formLoading || !formName.trim()">
+          <span class="mini-spinner" *ngIf="formLoading"></span>
+          <span *ngIf="!formLoading">{{ panelMode === 'create' ? 'إنشاء المجموعة' : 'حفظ التغييرات' }}</span>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- ── Deactivate (edit + active) ─────────────────────────────────────── -->
+    <section class="panel-section danger-section" *ngIf="panelMode === 'edit' && selected?.isActive" (click)="$event.stopPropagation()">
+      <h3 class="panel-section-title">إجراءات متقدمة</h3>
+      <button
+        class="btn-deactivate"
+        (click)="deactivate()"
+        [disabled]="deactivating">
+        <span class="mini-spinner mini-spinner-danger" *ngIf="deactivating"></span>
+        <span *ngIf="!deactivating">إلغاء تفعيل المجموعة</span>
+      </button>
+    </section>
+
+    <!-- ── Options (edit mode only) ────────────────────────────────────────── -->
+    <section class="panel-section options-section" *ngIf="panelMode === 'edit'" (click)="$event.stopPropagation()">
+      <div class="options-header">
+        <h3 class="panel-section-title options-title">الخيارات</h3>
+        <button class="btn-add-option" (click)="openAddOption()" *ngIf="!optionPanelMode">+ إضافة خيار جديد</button>
+      </div>
+
+      <!-- Active options list -->
+      <div class="options-list" *ngIf="activeOptions.length > 0">
+        <div class="option-row" *ngFor="let opt of activeOptions">
+          <div class="option-info">
+            <span class="option-name">{{ opt.name }}</span>
+            <span class="price-delta" *ngIf="opt.priceDelta > 0">+{{ opt.priceDelta }} ر.س</span>
+            <span class="default-badge" *ngIf="opt.isDefault">افتراضي</span>
+          </div>
+          <div class="option-actions">
+            <button class="btn-opt-edit" (click)="openEditOption(opt)" [disabled]="!!optionPanelMode">تعديل</button>
+            <button
+              class="btn-opt-remove"
+              (click)="deactivateOption(opt)"
+              [disabled]="deactivatingOptionId === opt.id || !!optionPanelMode">
+              <span class="mini-spinner mini-spinner-danger" *ngIf="deactivatingOptionId === opt.id"></span>
+              <span *ngIf="deactivatingOptionId !== opt.id">حذف</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <p class="empty-note options-empty" *ngIf="activeOptions.length === 0 && !optionPanelMode">لا توجد خيارات نشطة</p>
+
+      <!-- Option form -->
+      <div class="option-form" *ngIf="optionPanelMode">
+        <div class="option-form-title">{{ optionPanelMode === 'add' ? 'إضافة خيار جديد' : 'تعديل الخيار' }}</div>
+
+        <div class="form-stack">
+          <div class="field-group">
+            <label class="field-label">اسم الخيار *</label>
+            <input class="input-field" type="text" [(ngModel)]="optFormName" placeholder="مثال: كبير" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">فرق السعر (ر.س)</label>
+            <input class="input-field" type="number" [(ngModel)]="optFormPriceDelta" min="0" step="0.5" />
+          </div>
+
+          <div class="field-group checkbox-row">
+            <input type="checkbox" id="optIsDefault" [(ngModel)]="optFormIsDefault" class="checkbox-input" />
+            <label for="optIsDefault" class="checkbox-label">افتراضي</label>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">ترتيب العرض</label>
+            <input class="input-field" type="number" [(ngModel)]="optFormSortOrder" min="0" />
+          </div>
+
+          <div class="error-box small-error" *ngIf="optFormError">{{ optFormError }}</div>
+
+          <div class="option-form-actions">
+            <button
+              class="btn-primary opt-btn-save"
+              (click)="submitOption()"
+              [disabled]="optFormLoading || !optFormName.trim()">
+              <span class="mini-spinner" *ngIf="optFormLoading"></span>
+              <span *ngIf="!optFormLoading">حفظ</span>
+            </button>
+            <button class="btn-cancel-option" (click)="closeOptionPanel()" type="button">إلغاء</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <button class="btn-close-panel" (click)="closePanel()">إغلاق</button>
+  </div>
+
+</div>

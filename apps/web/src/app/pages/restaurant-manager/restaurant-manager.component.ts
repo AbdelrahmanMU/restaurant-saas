@@ -41,19 +41,30 @@ export class RestaurantManagerComponent {
     { name: 'نورة الشمري',   role: 'كاشير',    phone: '0503334455', status: 'pending' }
   ];
 
+  get isOwner(): boolean {
+    return this.auth.getActiveRole() === 'Owner';
+  }
+
   /** True for Owner and RestaurantManager — both have access to Employee Management */
   get canManageUsers(): boolean {
-    const role = this.auth.getActiveRole();
-    return role === 'Owner' || role === 'RestaurantManager';
+    return this.isOwner || this.auth.getActiveRole() === 'RestaurantManager';
   }
 
   constructor(public auth: AuthService, private router: Router) {}
 
-  inviteStaff(): void {
+  inviteStaff(): void { 
     this.router.navigate(['/restaurant-manager/staff']);
   }
 
   manageUsers(): void {
     this.router.navigate(['/owner/users']);
+  }
+
+  manageBranches(): void {
+    this.router.navigate(['/owner/branches']);
+  }
+
+  manageMenu(): void {
+    this.router.navigate(['/menu']);
   }
 }

@@ -1,0 +1,157 @@
+<div class="page-shell">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <button class="btn-icon" (click)="auth.goToDashboard()" aria-label="رجوع">&#8594;</button>
+    <h1 class="topbar-title">إدارة أقسام القائمة</h1>
+    <button class="btn-new" (click)="openCreate()">+ قسم جديد</button>
+  </header>
+
+  <main class="page-content">
+
+    <!-- Loading -->
+    <div class="state-box" *ngIf="loading">
+      <span class="spinner"></span>
+      <span>جارٍ التحميل…</span>
+    </div>
+
+    <!-- Error -->
+    <div class="error-box" *ngIf="error && !loading">{{ error }}</div>
+
+    <!-- Sections lists -->
+    <ng-container *ngIf="!loading && !error">
+
+      <!-- Active -->
+      <section class="list-section">
+        <h2 class="list-heading">الأقسام النشطة ({{ activeSections.length }})</h2>
+
+        <div class="sections-list" *ngIf="activeSections.length > 0; else emptyActive">
+          <div
+            class="section-row"
+            *ngFor="let s of activeSections"
+            (click)="openEdit(s)">
+            <div class="sec-main">
+              <div class="sec-header">
+                <span class="sec-name">{{ s.name }}</span>
+                <span class="sort-badge">{{ s.sortOrder }}</span>
+              </div>
+              <span class="sec-desc" *ngIf="s.description">{{ s.description }}</span>
+              <span class="sec-branch" *ngIf="isOwnerOrManager && s.branchName">{{ s.branchName }}</span>
+            </div>
+            <span class="chevron">&#8592;</span>
+          </div>
+        </div>
+
+        <ng-template #emptyActive>
+          <p class="empty-note">لا توجد أقسام نشطة</p>
+        </ng-template>
+      </section>
+
+      <!-- Inactive -->
+      <section class="list-section" *ngIf="inactiveSections.length > 0">
+        <h2 class="list-heading list-heading-muted">غير نشطة ({{ inactiveSections.length }})</h2>
+        <div class="sections-list">
+          <div
+            class="section-row section-row-inactive"
+            *ngFor="let s of inactiveSections"
+            (click)="openEdit(s)">
+            <div class="sec-main">
+              <span class="sec-name">{{ s.name }}</span>
+              <span class="sec-branch" *ngIf="isOwnerOrManager && s.branchName">{{ s.branchName }}</span>
+            </div>
+            <span class="chevron">&#8592;</span>
+          </div>
+        </div>
+      </section>
+
+    </ng-container>
+
+  </main>
+
+  <!-- ── Panel overlay ──────────────────────────────────────────────────────── -->
+  <div class="panel-overlay" *ngIf="panelMode" (click)="closePanel()"></div>
+
+  <!-- ── Slide-up panel ─────────────────────────────────────────────────────── -->
+  <div class="detail-panel" *ngIf="panelMode">
+    <div class="panel-handle"></div>
+
+    <div class="panel-title-row" (click)="$event.stopPropagation()">
+      <h2 class="panel-title">{{ panelMode === 'create' ? 'قسم جديد' : 'تعديل القسم' }}</h2>
+    </div>
+
+    <!-- ── Form ────────────────────────────────────────────────────────────── -->
+    <section class="panel-section" (click)="$event.stopPropagation()">
+      <div class="form-stack">
+
+        <!-- Branch selector (Owner/Manager, create mode) -->
+        <div class="field-group" *ngIf="isOwnerOrManager && panelMode === 'create'">
+          <label class="field-label">الفرع *</label>
+          <select class="input-field" [(ngModel)]="formBranchId" [disabled]="branchesLoading">
+            <option value="" disabled>اختر الفرع…</option>
+            <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
+          </select>
+        </div>
+
+        <!-- Branch name (read-only, edit mode, Owner/Manager) -->
+        <div class="field-group branch-info" *ngIf="isOwnerOrManager && panelMode === 'edit' && selected?.branchName">
+          <span class="field-label">الفرع</span>
+          <span class="branch-label">{{ selected!.branchName }}</span>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">اسم القسم *</label>
+          <input class="input-field" type="text" [(ngModel)]="formName" placeholder="مثال: المشروبات الساخنة" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">الوصف</label>
+          <input class="input-field" type="text" [(ngModel)]="formDescription" placeholder="اختياري" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">ترتيب العرض</label>
+          <input class="input-field" type="number" [(ngModel)]="formSortOrder" min="0" />
+        </div>
+
+        <!-- Status toggle (edit only) -->
+        <div class="field-group toggle-row" *ngIf="panelMode === 'edit'">
+          <span class="field-label">الحالة</span>
+          <button
+            class="toggle-btn"
+            [class.toggle-on]="formIsActive"
+            [class.toggle-off]="!formIsActive"
+            (click)="formIsActive = !formIsActive"
+            type="button">
+            {{ formIsActive ? 'نشط' : 'غير نشط' }}
+          </button>
+        </div>
+
+        <div class="error-box small-error" *ngIf="formError">{{ formError }}</div>
+
+        <button
+          class="btn-primary"
+          (click)="submit()"
+          [disabled]="formLoading || !formName.trim()">
+          <span class="mini-spinner" *ngIf="formLoading"></span>
+          <span *ngIf="!formLoading">{{ panelMode === 'create' ? 'إنشاء القسم' : 'حفظ التغييرات' }}</span>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- ── Deactivate (edit + active) ─────────────────────────────────────── -->
+    <section class="panel-section danger-section" *ngIf="panelMode === 'edit' && selected?.isActive" (click)="$event.stopPropagation()">
+      <h3 class="panel-section-title">إجراءات متقدمة</h3>
+      <button
+        class="btn-deactivate"
+        (click)="deactivate()"
+        [disabled]="deactivating">
+        <span class="mini-spinner mini-spinner-danger" *ngIf="deactivating"></span>
+        <span *ngIf="!deactivating">إلغاء تفعيل القسم</span>
+      </button>
+    </section>
+
+    <button class="btn-close-panel" (click)="closePanel()">إغلاق</button>
+  </div>
+
+</div>

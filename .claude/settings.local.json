@@ -4,7 +4,14 @@
       "Bash(dotnet:*)",
       "Bash(npx:*)",
       "Bash(docker compose:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(ls \"D:/Projects/restaurant-saas/apps/api/Migrations/\" | grep \".cs$\")",
+      "Bash(ls /d/Projects/restaurant-saas/apps/api/Migrations/*.cs 2>/dev/null | head -10)",
+      "Bash(docker ps:*)",
+      "Bash(docker exec:*)",
+      "Bash(ls \"D:\\\\Projects\\\\restaurant-saas\\\\apps\\\\web\\\\src\\\\app\\\\pages\\\\menu\\\\\" 2>/dev/null || echo \"Directory not found\")",
+      "Bash(find \"D:\\\\Projects\\\\restaurant-saas\\\\apps\\\\api\" -name \"*.cs\" -type f | xargs grep -l \"CategoryId\\\\|category\" | head -30)",
+      "Bash(find \"/d/Projects/restaurant-saas/apps/api/Migrations\" -name \"*.cs\" -type f 2>/dev/null | head -20)"
     ]
   }
 }

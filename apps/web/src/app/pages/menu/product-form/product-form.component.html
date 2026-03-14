@@ -1,0 +1,433 @@
+<div class="page-shell">
+
+  <!-- ── Topbar ── -->
+  <header class="topbar">
+    <button class="btn-icon" (click)="router.navigate(['/menu/products'])">&#8594;</button>
+    <h1 class="topbar-title">{{ isEditMode ? (product?.name || 'جارٍ التحميل…') : 'منتج جديد' }}</h1>
+    <div class="topbar-spacer"></div>
+  </header>
+
+  <!-- ── Loading ── -->
+  <div class="state-box" *ngIf="loading">
+    <span class="spinner"></span>
+    <span>جارٍ التحميل…</span>
+  </div>
+
+  <!-- ── Error ── -->
+  <div class="error-box page-error" *ngIf="error && !loading">{{ error }}</div>
+
+  <!-- ── Tab bar (edit mode only) ── -->
+  <nav class="tab-bar" *ngIf="!loading && !error && isEditMode">
+    <button class="tab" [class.tab-active]="activeTab === 'general'" (click)="activeTab = 'general'">المعلومات</button>
+    <button class="tab" [class.tab-active]="activeTab === 'variants'" (click)="activeTab = 'variants'">الأسعار</button>
+    <button class="tab" [class.tab-active]="activeTab === 'modifiers'" (click)="activeTab = 'modifiers'">الإضافات</button>
+    <button class="tab" [class.tab-active]="activeTab === 'bundle'" (click)="activeTab = 'bundle'; loadAllVariants()" *ngIf="isBundle">الوجبة</button>
+    <button class="tab" [class.tab-active]="activeTab === 'availability'" (click)="activeTab = 'availability'">التوفر</button>
+  </nav>
+
+  <main class="page-content" *ngIf="!loading && !error">
+
+    <!-- ════════════════════════════════════════════════════════════
+         TAB: General
+         ════════════════════════════════════════════════════════════ -->
+    <section *ngIf="activeTab === 'general'">
+      <div class="form-card">
+        <div class="form-stack">
+
+          <!-- Branch selector (create mode, isOwnerOrManager) -->
+          <div class="field-group" *ngIf="!isEditMode && isOwnerOrManager">
+            <label class="field-label">الفرع *</label>
+            <select class="input-field" [(ngModel)]="formBranchId">
+              <option value="" disabled>اختر الفرع…</option>
+              <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
+            </select>
+          </div>
+
+          <!-- Product type (create mode only) -->
+          <div class="field-group" *ngIf="!isEditMode">
+            <label class="field-label">نوع المنتج *</label>
+            <select class="input-field" [(ngModel)]="formType">
+              <option *ngFor="let t of productTypes" [value]="t.value">{{ t.label }}</option>
+            </select>
+          </div>
+
+          <!-- Type badge (edit mode, read-only) -->
+          <div class="type-badge-row" *ngIf="isEditMode">
+            <span class="field-label">النوع</span>
+            <span class="type-badge">{{ typeLabel(formType) }}</span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">اسم المنتج *</label>
+            <input class="input-field" type="text" [(ngModel)]="formName" placeholder="مثال: برجر كلاسيك" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">الوصف</label>
+            <textarea class="input-field textarea" [(ngModel)]="formDescription" rows="3" placeholder="وصف اختياري"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">رابط الصورة</label>
+            <input class="input-field" type="url" [(ngModel)]="formImageUrl" placeholder="https://..." />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">قسم القائمة</label>
+            <select class="input-field" [(ngModel)]="formMenuSectionId">
+              <option value="">— بدون قسم —</option>
+              <option *ngFor="let s of sections" [value]="s.id">{{ s.name }}</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">ترتيب العرض</label>
+            <input class="input-field" type="number" [(ngModel)]="formSortOrder" min="0" />
+          </div>
+
+          <!-- Status toggle (edit mode) -->
+          <div class="field-group toggle-row" *ngIf="isEditMode">
+            <span class="field-label">الحالة</span>
+            <button class="toggle-btn" [class.toggle-on]="formIsActive" [class.toggle-off]="!formIsActive" (click)="formIsActive = !formIsActive" type="button">
+              {{ formIsActive ? 'نشط' : 'غير نشط' }}
+            </button>
+          </div>
+
+          <div class="error-box small-error" *ngIf="saveError">{{ saveError }}</div>
+          <div class="success-box" *ngIf="saveSuccess">تم الحفظ ✓</div>
+
+          <button class="btn-primary" (click)="saveGeneral()" [disabled]="saving || !formName.trim()">
+            <span class="mini-spinner" *ngIf="saving"></span>
+            <span *ngIf="!saving">{{ isEditMode ? 'حفظ التغييرات' : 'إنشاء المنتج' }}</span>
+          </button>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════════
+         TAB: Variants
+         ════════════════════════════════════════════════════════════ -->
+    <section *ngIf="activeTab === 'variants' && isEditMode">
+
+      <div class="tab-header">
+        <h2 class="tab-section-title">أسعار وأحجام المنتج</h2>
+        <button class="btn-new-sm" (click)="openCreateVariant()">+ متغيّر جديد</button>
+      </div>
+
+      <div class="variants-list">
+        <div class="variant-row" *ngFor="let v of product?.variants" [class.variant-inactive]="!v.isActive">
+          <div class="variant-info">
+            <span class="variant-name">{{ v.name }}</span>
+            <span class="variant-sku" *ngIf="v.sku">{{ v.sku }}</span>
+            <span class="default-badge" *ngIf="v.isDefault">افتراضي</span>
+          </div>
+          <div class="variant-actions">
+            <span class="variant-price">{{ v.price | number:'1.2-2' }} ر.س</span>
+            <button class="btn-edit-sm" (click)="openEditVariant(v)">تعديل</button>
+          </div>
+        </div>
+        <div class="empty-note" *ngIf="!product?.variants?.length">لا توجد أسعار بعد — أضف متغيّراً لتحديد السعر</div>
+      </div>
+
+      <!-- Variant slide-up panel overlay -->
+      <div class="panel-overlay" *ngIf="variantPanelMode" (click)="closeVariantPanel()"></div>
+
+      <!-- Variant slide-up panel -->
+      <div class="detail-panel" *ngIf="variantPanelMode">
+        <div class="panel-handle"></div>
+        <div class="panel-title-row">
+          <h2 class="panel-title">{{ variantPanelMode === 'create' ? 'متغيّر جديد' : 'تعديل المتغيّر' }}</h2>
+        </div>
+        <section class="panel-section" (click)="$event.stopPropagation()">
+          <div class="form-stack">
+
+            <div class="field-group">
+              <label class="field-label">الاسم * (مثال: صغير، وسط، كبير)</label>
+              <input class="input-field" type="text" [(ngModel)]="vFormName" />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">السعر *</label>
+              <input class="input-field" type="number" [(ngModel)]="vFormPrice" min="0" step="0.01" />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">رمز المخزون (SKU)</label>
+              <input class="input-field" type="text" [(ngModel)]="vFormSku" />
+            </div>
+
+            <div class="field-group toggle-row">
+              <span class="field-label">افتراضي</span>
+              <button class="toggle-btn" [class.toggle-on]="vFormIsDefault" [class.toggle-off]="!vFormIsDefault" (click)="vFormIsDefault = !vFormIsDefault" type="button">
+                {{ vFormIsDefault ? 'نعم' : 'لا' }}
+              </button>
+            </div>
+
+            <div class="field-group toggle-row" *ngIf="variantPanelMode === 'edit'">
+              <span class="field-label">الحالة</span>
+              <button class="toggle-btn" [class.toggle-on]="vFormIsActive" [class.toggle-off]="!vFormIsActive" (click)="vFormIsActive = !vFormIsActive" type="button">
+                {{ vFormIsActive ? 'نشط' : 'غير نشط' }}
+              </button>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">ترتيب العرض</label>
+              <input class="input-field" type="number" [(ngModel)]="vFormSortOrder" min="0" />
+            </div>
+
+            <div class="error-box small-error" *ngIf="vFormError">{{ vFormError }}</div>
+
+            <button class="btn-primary" (click)="submitVariant()" [disabled]="vFormLoading || !vFormName.trim()">
+              <span class="mini-spinner" *ngIf="vFormLoading"></span>
+              <span *ngIf="!vFormLoading">{{ variantPanelMode === 'create' ? 'إضافة' : 'حفظ' }}</span>
+            </button>
+
+          </div>
+        </section>
+        <button class="btn-close-panel" (click)="closeVariantPanel()">إغلاق</button>
+      </div>
+
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════════
+         TAB: Modifiers
+         ════════════════════════════════════════════════════════════ -->
+    <section *ngIf="activeTab === 'modifiers' && isEditMode">
+      <div class="modifiers-layout">
+
+        <!-- Left: variant selector -->
+        <div class="variant-selector">
+          <h3 class="selector-title">اختر المتغيّر</h3>
+          <button
+            class="selector-btn"
+            *ngFor="let v of product?.variants"
+            [class.selector-active]="modifierVariantId === v.id"
+            (click)="showModifiersFor(v.id)">
+            {{ v.name }}
+            <span class="mod-count">{{ v.modifierGroups.length }}</span>
+          </button>
+          <div class="selector-empty" *ngIf="!product?.variants?.length">لا توجد متغيّرات</div>
+        </div>
+
+        <!-- Right: modifier groups for selected variant -->
+        <div class="modifier-panel" *ngIf="modifierVariantId">
+          <div class="mod-header">
+            <h3 class="selector-title">إضافات: {{ currentVariant?.name }}</h3>
+          </div>
+
+          <!-- Linked groups -->
+          <div class="linked-groups">
+            <div class="linked-group-row" *ngFor="let mg of currentVariantModifiers">
+              <div class="linked-group-info">
+                <span class="linked-group-name">{{ mg.name }}</span>
+                <span class="sel-chip">{{ mg.selectionType === 'Single' ? 'فردي' : 'متعدد' }}</span>
+                <span class="req-chip" *ngIf="mg.isRequired">إلزامي</span>
+                <span class="opt-count">{{ mg.options.length }} خيارات</span>
+              </div>
+              <button class="btn-unlink" (click)="unlinkGroup(currentVariant!, mg.linkId, mg.modifierGroupId)">إزالة</button>
+            </div>
+            <div class="empty-note" *ngIf="!currentVariantModifiers.length">لا توجد إضافات مرتبطة</div>
+          </div>
+
+          <!-- Link new group -->
+          <div class="link-row">
+            <select class="input-field" [(ngModel)]="linkingGroupId">
+              <option value="" disabled>اختر مجموعة إضافات…</option>
+              <option *ngFor="let g of availableGroupsToLink" [value]="g.id">{{ g.name }}</option>
+            </select>
+            <button class="btn-link" (click)="linkGroup()" [disabled]="!linkingGroupId || linkLoading">ربط</button>
+          </div>
+          <div class="error-box small-error" *ngIf="linkError">{{ linkError }}</div>
+        </div>
+
+        <div class="modifier-panel modifier-panel-empty" *ngIf="!modifierVariantId">
+          <span class="muted-hint">&#8592; اختر متغيّراً من القائمة</span>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════════
+         TAB: Bundle
+         ════════════════════════════════════════════════════════════ -->
+    <section *ngIf="activeTab === 'bundle' && isEditMode && isBundle">
+
+      <div class="tab-header">
+        <h2 class="tab-section-title">مكونات الوجبة</h2>
+        <button class="btn-new-sm" (click)="openCreateSlot()">+ مكون جديد</button>
+      </div>
+
+      <div class="slots-list" *ngIf="product?.bundle?.slots?.length">
+        <div class="slot-card" *ngFor="let slot of product!.bundle!.slots">
+
+          <div class="slot-header">
+            <span class="slot-name">{{ slot.name }}</span>
+            <div class="slot-badges">
+              <span class="slot-badge-required" *ngIf="slot.isRequired">إلزامي</span>
+              <span class="slot-badge-optional" *ngIf="!slot.isRequired">اختياري</span>
+              <span class="slot-range">{{ slot.minChoices }}–{{ slot.maxChoices }}</span>
+            </div>
+            <div class="slot-actions">
+              <button class="btn-edit-sm" (click)="openEditSlot(slot)">تعديل</button>
+              <button class="btn-remove-sm" (click)="deleteSlot(slot)">حذف</button>
+            </div>
+          </div>
+
+          <!-- Choices for this slot -->
+          <div class="slot-choices">
+            <div class="choice-row" *ngFor="let ch of slot.choices">
+
+              <!-- View mode -->
+              <ng-container *ngIf="editChoiceId !== ch.id">
+                <span class="choice-name">{{ ch.productName }} — {{ ch.variantName }}</span>
+                <span class="choice-price" *ngIf="ch.priceDelta > 0">+{{ ch.priceDelta | number:'1.2-2' }} ر.س</span>
+                <button class="btn-edit-choice" (click)="startEditChoice(slot.id, ch.id, ch.priceDelta)" title="تعديل فرق السعر">✏️</button>
+                <button class="btn-remove-choice" (click)="removeChoice(slot.id, ch.id)">&#215;</button>
+              </ng-container>
+
+              <!-- Edit price delta inline -->
+              <ng-container *ngIf="editChoiceId === ch.id">
+                <span class="choice-name">{{ ch.productName }} — {{ ch.variantName }}</span>
+                <input class="input-field input-delta" type="number" [(ngModel)]="editChoicePriceDelta" min="0" step="0.01" />
+                <button class="btn-save-avail" (click)="saveEditChoice()" [disabled]="editChoiceLoading">حفظ</button>
+                <button class="btn-cancel-sm" (click)="cancelEditChoice()">إلغاء</button>
+                <div class="error-box small-error" *ngIf="editChoiceError">{{ editChoiceError }}</div>
+              </ng-container>
+
+            </div>
+            <div class="empty-note" *ngIf="!slot.choices.length">لا توجد خيارات بعد</div>
+          </div>
+
+          <!-- Add choice to this slot -->
+          <div class="add-choice-row" *ngIf="addChoiceSlotId === slot.id; else showAddBtn">
+            <select class="input-field" [(ngModel)]="addChoiceVariantId" [disabled]="allVariantsLoading">
+              <option value="" disabled>{{ allVariantsLoading ? 'جارٍ التحميل…' : 'اختر متغيّر منتج…' }}</option>
+              <option *ngFor="let v of availableVariantsForSlot(slot.id)" [value]="v.variantId">
+                {{ v.productName }} — {{ v.variantName }} ({{ v.price | number:'1.2-2' }} ر.س)
+              </option>
+            </select>
+            <input class="input-field input-delta" type="number" [(ngModel)]="addChoicePriceDelta" placeholder="فرق السعر" min="0" step="0.01" />
+            <button class="btn-link" (click)="submitChoice()" [disabled]="!addChoiceVariantId || addChoiceLoading">إضافة</button>
+            <button class="btn-cancel-sm" (click)="addChoiceSlotId = null">إلغاء</button>
+          </div>
+          <ng-template #showAddBtn>
+            <button class="btn-add-choice" (click)="showChoicesFor(slot.id)">+ إضافة خيار جديد</button>
+          </ng-template>
+          <div class="error-box small-error" *ngIf="addChoiceError && addChoiceSlotId === slot.id">{{ addChoiceError }}</div>
+
+        </div>
+      </div>
+
+      <div class="empty-note" *ngIf="!product?.bundle?.slots?.length">لا توجد فتحات بعد — أضف فتحة لبدء تكوين الوجبة</div>
+
+      <!-- Slot slide-up panel overlay -->
+      <div class="panel-overlay" *ngIf="slotPanelMode" (click)="closeSlotPanel()"></div>
+
+      <!-- Slot slide-up panel -->
+      <div class="detail-panel" *ngIf="slotPanelMode">
+        <div class="panel-handle"></div>
+        <div class="panel-title-row">
+          <h2 class="panel-title">{{ slotPanelMode === 'create' ? 'مكون جديد' : 'تعديل الفتحة' }}</h2>
+        </div>
+        <section class="panel-section" (click)="$event.stopPropagation()">
+          <div class="form-stack">
+
+            <div class="field-group">
+              <label class="field-label">اسم الفتحة * (مثال: الوجبة الرئيسية، الطرف، المشروب)</label>
+              <input class="input-field" type="text" [(ngModel)]="sFormName" />
+            </div>
+
+            <div class="field-group toggle-row">
+              <span class="field-label">إلزامي</span>
+              <button class="toggle-btn" [class.toggle-on]="sFormIsRequired" [class.toggle-off]="!sFormIsRequired" (click)="sFormIsRequired = !sFormIsRequired" type="button">
+                {{ sFormIsRequired ? 'نعم' : 'لا' }}
+              </button>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">الحد الأدنى للاختيارات</label>
+              <input class="input-field" type="number" [(ngModel)]="sFormMinChoices" min="1" />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">الحد الأقصى للاختيارات</label>
+              <input class="input-field" type="number" [(ngModel)]="sFormMaxChoices" [min]="sFormMinChoices" />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">ترتيب العرض</label>
+              <input class="input-field" type="number" [(ngModel)]="sFormSortOrder" min="0" />
+            </div>
+
+            <div class="error-box small-error" *ngIf="sFormError">{{ sFormError }}</div>
+
+            <button class="btn-primary" (click)="submitSlot()" [disabled]="sFormLoading || !sFormName.trim()">
+              <span class="mini-spinner" *ngIf="sFormLoading"></span>
+              <span *ngIf="!sFormLoading">{{ slotPanelMode === 'create' ? 'إضافة' : 'حفظ' }}</span>
+            </button>
+
+          </div>
+        </section>
+        <button class="btn-close-panel" (click)="closeSlotPanel()">إغلاق</button>
+      </div>
+
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════════
+         TAB: Availability
+         ════════════════════════════════════════════════════════════ -->
+    <section *ngIf="activeTab === 'availability' && isEditMode">
+
+      <div class="tab-header" *ngIf="isOwnerOrManager">
+        <label class="field-label">الفرع</label>
+        <select class="input-field branch-sel" [(ngModel)]="availabilityBranchId" (change)="loadAvailability()">
+          <option value="">اختر الفرع…</option>
+          <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
+        </select>
+      </div>
+
+      <div class="avail-list">
+        <div class="avail-row" *ngFor="let item of availabilityItems">
+
+          <div class="avail-info">
+            <span class="avail-variant-name">{{ item.variantName }}</span>
+            <span class="avail-base-price">{{ item.basePrice | number:'1.2-2' }} ر.س</span>
+            <span class="override-badge" *ngIf="item.priceOverride != null">سعر خاص: {{ item.priceOverride | number:'1.2-2' }}</span>
+          </div>
+
+          <div class="avail-right">
+            <span class="avail-status" [class.avail-on]="item.isAvailable" [class.avail-off]="!item.isAvailable">
+              {{ item.isAvailable ? 'متاح' : 'غير متاح' }}
+            </span>
+            <button class="btn-edit-sm" (click)="startEditAvail(item)" *ngIf="editingVariantId !== item.productVariantId">تعديل</button>
+          </div>
+
+          <!-- Inline edit -->
+          <div class="avail-edit-form" *ngIf="editingVariantId === item.productVariantId">
+            <div class="avail-edit-row">
+              <button class="toggle-btn" [class.toggle-on]="editIsAvailable" [class.toggle-off]="!editIsAvailable" (click)="editIsAvailable = !editIsAvailable" type="button">
+                {{ editIsAvailable ? 'متاح' : 'غير متاح' }}
+              </button>
+              <input class="input-field input-override" type="number" [(ngModel)]="editPriceOverride" placeholder="سعر الفرع (اختياري)" min="0" step="0.01" />
+              <button class="btn-save-avail" (click)="saveAvail(item)" [disabled]="editAvailLoading">حفظ</button>
+              <button class="btn-cancel-sm" (click)="cancelEditAvail()">إلغاء</button>
+            </div>
+            <div class="error-box small-error" *ngIf="editAvailError">{{ editAvailError }}</div>
+          </div>
+
+        </div>
+
+        <div class="empty-note" *ngIf="!availabilityItems.length && !isOwnerOrManager">لا توجد بيانات توفر</div>
+        <div class="empty-note" *ngIf="!availabilityItems.length && isOwnerOrManager && availabilityBranchId">لا توجد متغيّرات نشطة لهذا الفرع</div>
+        <div class="empty-note" *ngIf="isOwnerOrManager && !availabilityBranchId">اختر فرعاً لعرض بيانات التوفر</div>
+      </div>
+
+    </section>
+
+  </main>
+</div>

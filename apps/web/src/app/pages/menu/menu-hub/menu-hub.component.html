@@ -1,0 +1,44 @@
+<div class="page-shell">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <button class="btn-icon" (click)="auth.goToDashboard()" aria-label="رجوع">&#8594;</button>
+    <h1 class="topbar-title">إدارة القائمة</h1>
+    <span class="topbar-spacer"></span>
+  </header>
+
+  <main class="page-content">
+    <div class="menu-grid">
+
+      <!-- Products -->
+      <a class="menu-card" [routerLink]="['/menu/products']">
+        <span class="menu-icon">🍽️</span>
+        <span class="menu-label">المنتجات</span>
+        <span class="menu-sub">إدارة المنتجات والأسعار</span>
+      </a>
+
+      <!-- Menu Sections -->
+      <a class="menu-card" [routerLink]="['/menu/sections']">
+        <span class="menu-icon">📂</span>
+        <span class="menu-label">أقسام القائمة</span>
+        <span class="menu-sub">تنظيم القائمة في أقسام</span>
+      </a>
+
+      <!-- Modifier Groups -->
+      <a class="menu-card" [routerLink]="['/menu/modifier-groups']">
+        <span class="menu-icon">⚙️</span>
+        <span class="menu-label">مجموعات الإضافات</span>
+        <span class="menu-sub">الإضافات والتعديلات</span>
+      </a>
+
+      <!-- Branch Availability -->
+      <a class="menu-card" [routerLink]="['/menu/branch-availability']">
+        <span class="menu-icon">🏪</span>
+        <span class="menu-label">توفر الفرع</span>
+        <span class="menu-sub">إدارة أسعار وتوفر المنتجات</span>
+      </a>
+
+    </div>
+  </main>
+
+</div>

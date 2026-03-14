@@ -1,0 +1,160 @@
+<div class="page-shell">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <button class="btn-icon" (click)="auth.goToDashboard()" aria-label="رجوع">&#8594;</button>
+    <h1 class="topbar-title">إدارة الفروع</h1>
+    <button class="btn-new" *ngIf="isOwner" (click)="openCreate()">+ فرع جديد</button>
+  </header>
+
+  <main class="page-content">
+
+    <!-- Loading -->
+    <div class="state-box" *ngIf="loading">
+      <span class="spinner"></span>
+      <span>جارٍ التحميل…</span>
+    </div>
+
+    <!-- Error -->
+    <div class="error-box" *ngIf="error && !loading">{{ error }}</div>
+
+    <!-- Branch list -->
+    <div class="branches-list" *ngIf="!loading && !error">
+
+      <div
+        class="branch-row"
+        *ngFor="let b of branches"
+        (click)="openEdit(b)"
+        [class.branch-inactive]="!b.isActive">
+
+        <div class="branch-main">
+          <div class="branch-header">
+            <span class="branch-name">{{ b.name }}</span>
+            <span class="status-badge" [class.badge-active]="b.isActive" [class.badge-inactive]="!b.isActive">
+              {{ b.isActive ? 'نشط' : 'غير نشط' }}
+            </span>
+          </div>
+          <span class="branch-address" *ngIf="b.address">{{ b.address }}</span>
+        </div>
+
+        <div class="branch-footer">
+          <div class="manager-chip" *ngIf="b.manager; else noManager">
+            <span class="manager-icon">&#128100;</span>
+            <span>{{ b.manager.fullName }}</span>
+          </div>
+          <ng-template #noManager>
+            <span class="no-manager">لا يوجد مدير</span>
+          </ng-template>
+          <span class="chevron" *ngIf="isOwner">&#8592;</span>
+        </div>
+      </div>
+
+      <div class="empty-note" *ngIf="branches.length === 0">لا توجد فروع بعد</div>
+    </div>
+
+  </main>
+
+  <!-- ── Panel overlay ─────────────────────────────────────────────────────── -->
+  <div class="panel-overlay" *ngIf="panelMode" (click)="closePanel()"></div>
+
+  <!-- ── Slide-up panel ────────────────────────────────────────────────────── -->
+  <div class="detail-panel" *ngIf="panelMode">
+    <div class="panel-handle"></div>
+
+    <div class="panel-title-row" (click)="$event.stopPropagation()">
+      <h2 class="panel-title">{{ panelMode === 'create' ? 'فرع جديد' : 'تعديل الفرع' }}</h2>
+    </div>
+
+    <!-- ── Branch form ──────────────────────────────────────────────────────── -->
+    <section class="panel-section" (click)="$event.stopPropagation()">
+      <div class="form-stack">
+
+        <div class="field-group">
+          <label class="field-label">اسم الفرع *</label>
+          <input class="input-field" type="text" [(ngModel)]="formName" placeholder="مثال: فرع الرياض الشمالي" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">العنوان</label>
+          <input class="input-field" type="text" [(ngModel)]="formAddress" placeholder="اختياري" />
+        </div>
+
+        <!-- Status toggle (edit only) -->
+        <div class="field-group toggle-row" *ngIf="panelMode === 'edit'">
+          <span class="field-label">حالة الفرع</span>
+          <button
+            class="toggle-btn"
+            [class.toggle-on]="formIsActive"
+            [class.toggle-off]="!formIsActive"
+            (click)="formIsActive = !formIsActive"
+            type="button">
+            {{ formIsActive ? 'نشط' : 'غير نشط' }}
+          </button>
+        </div>
+
+        <div class="error-box small-error" *ngIf="formError">{{ formError }}</div>
+
+        <button
+          class="btn-primary"
+          (click)="submit()"
+          [disabled]="formLoading || !formName.trim()">
+          <span class="mini-spinner" *ngIf="formLoading"></span>
+          <span *ngIf="!formLoading">{{ panelMode === 'create' ? 'إنشاء الفرع' : 'حفظ التغييرات' }}</span>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- ── Manager section (edit only) ────────────────────────────────────── -->
+    <section class="panel-section manager-section" *ngIf="panelMode === 'edit'" (click)="$event.stopPropagation()">
+      <h3 class="panel-section-title">مدير الفرع</h3>
+
+      <!-- Current manager -->
+      <div class="current-manager" *ngIf="selected?.manager">
+        <div class="manager-info">
+          <div class="manager-avatar">{{ selected!.manager!.fullName.charAt(0) }}</div>
+          <div>
+            <div class="manager-name">{{ selected!.manager!.fullName }}</div>
+            <div class="manager-phone">{{ selected!.manager!.phoneNumber }}</div>
+          </div>
+        </div>
+        <button
+          class="btn-remove-manager"
+          (click)="removeManager()"
+          [disabled]="removingManager">
+          <span class="mini-spinner" *ngIf="removingManager"></span>
+          <span *ngIf="!removingManager">إزالة</span>
+        </button>
+      </div>
+
+      <!-- Assign manager -->
+      <div class="assign-row" *ngIf="!usersLoading">
+        <label class="field-label">{{ selected?.manager ? 'تغيير المدير' : 'تعيين مدير' }}</label>
+        <div class="assign-controls">
+          <select class="input-field" [(ngModel)]="selectedUserId">
+            <option value="" disabled>اختر موظفاً…</option>
+            <option *ngFor="let u of candidateUsers" [value]="u.id">
+              {{ u.fullName }} — {{ u.roles.join('، ') }}
+            </option>
+          </select>
+          <button
+            class="btn-assign"
+            (click)="assignManager()"
+            [disabled]="!selectedUserId || managerLoading">
+            <span class="mini-spinner mini-spinner-dark" *ngIf="managerLoading"></span>
+            <span *ngIf="!managerLoading">تعيين</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="state-box state-box-small" *ngIf="usersLoading">
+        <span class="spinner spinner-sm"></span>
+      </div>
+
+      <div class="error-box small-error" *ngIf="managerError">{{ managerError }}</div>
+    </section>
+
+    <button class="btn-close-panel" (click)="closePanel()">إغلاق</button>
+  </div>
+
+</div>

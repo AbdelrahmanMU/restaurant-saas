@@ -1,0 +1,499 @@
+@use '../../../shared/styles/tokens' as *;
+
+// ─── Shell ────────────────────────────────────────────────────────────────────
+.page-shell {
+  min-height: 100dvh;
+  background: $linen;
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+}
+
+// ─── Topbar ───────────────────────────────────────────────────────────────────
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-4;
+  background: $surface;
+  border-bottom: 1.5px solid $border;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar-title {
+  font-family: $font-display;
+  font-size: 18px;
+  font-weight: 600;
+  color: $clay;
+  flex: 1;
+  text-align: center;
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: $linen;
+  border: none;
+  font-size: 18px;
+  color: $mahogany;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-new {
+  background: $mahogany;
+  color: $surface;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity $transition-fast;
+
+  &:hover { opacity: 0.88; }
+}
+
+// ─── Content ──────────────────────────────────────────────────────────────────
+.page-content {
+  flex: 1;
+  padding: $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+// ─── State boxes ──────────────────────────────────────────────────────────────
+.state-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  padding: $space-8;
+  color: $muted;
+  font-size: 15px;
+}
+
+.state-box-small {
+  padding: $space-4;
+}
+
+.error-box {
+  background: rgba($status-cancelled, 0.08);
+  color: $status-cancelled;
+  border-radius: $radius-sm;
+  padding: $space-3 $space-4;
+  font-size: 14px;
+}
+
+.small-error { margin-top: $space-2; }
+
+.empty-note {
+  text-align: center;
+  color: $muted;
+  font-size: 15px;
+  padding: $space-8;
+}
+
+// ─── Branch list ──────────────────────────────────────────────────────────────
+.branches-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.branch-row {
+  background: $surface;
+  border-radius: $radius-card;
+  padding: $space-4;
+  border: 1.5px solid $border;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  &:hover { border-color: $mahogany; box-shadow: $shadow-sm; }
+}
+
+.branch-inactive {
+  opacity: 0.6;
+}
+
+.branch-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.branch-header {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.branch-name {
+  font-family: $font-display;
+  font-size: 16px;
+  font-weight: 700;
+  color: $clay;
+  flex: 1;
+}
+
+.branch-address {
+  font-size: 13px;
+  color: $muted;
+}
+
+.branch-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: $space-1;
+}
+
+// ─── Status badge ─────────────────────────────────────────────────────────────
+.status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.badge-active {
+  background: rgba($status-ready, 0.12);
+  color: $status-ready;
+}
+
+.badge-inactive {
+  background: rgba($muted, 0.12);
+  color: $muted;
+}
+
+// ─── Manager chip ─────────────────────────────────────────────────────────────
+.manager-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: $clay;
+  background: rgba($amber, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.manager-icon { font-size: 14px; }
+
+.no-manager {
+  font-size: 13px;
+  color: $muted;
+  font-style: italic;
+}
+
+.chevron {
+  font-size: 16px;
+  color: $mahogany;
+  opacity: 0.5;
+}
+
+// ─── Spinner ──────────────────────────────────────────────────────────────────
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba($mahogany, 0.15);
+  border-top-color: $mahogany;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.65s linear infinite;
+}
+
+.spinner-sm {
+  width: 18px;
+  height: 18px;
+  border-width: 2px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.mini-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba($surface, 0.4);
+  border-top-color: $surface;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.65s linear infinite;
+}
+
+.mini-spinner-dark {
+  border: 2px solid rgba($clay, 0.2);
+  border-top-color: $clay;
+}
+
+// ─── Slide-up panel ───────────────────────────────────────────────────────────
+.panel-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 40;
+}
+
+.detail-panel {
+  position: fixed;
+  bottom: 0;
+  inset-inline: 0;
+  background: $surface;
+  border-radius: 24px 24px 0 0;
+  z-index: 50;
+  padding: $space-4 $space-4 calc($space-6 + env(safe-area-inset-bottom));
+  max-height: 90dvh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  animation: slide-up 0.22s ease-out;
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.panel-handle {
+  width: 40px;
+  height: 4px;
+  background: $border;
+  border-radius: 2px;
+  margin: 0 auto $space-2;
+}
+
+.panel-title-row { padding: 0 $space-2 $space-2; }
+
+.panel-title {
+  font-family: $font-display;
+  font-size: 18px;
+  font-weight: 700;
+  color: $clay;
+  margin: 0;
+}
+
+// ─── Panel sections ───────────────────────────────────────────────────────────
+.panel-section {
+  padding: $space-4 $space-2;
+  border-top: 1.5px solid $border;
+}
+
+.panel-section-title {
+  font-family: $font-display;
+  font-size: 14px;
+  font-weight: 600;
+  color: $muted;
+  margin: 0 0 $space-3;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.manager-section { padding-top: $space-4; }
+
+// ─── Form ─────────────────────────────────────────────────────────────────────
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $muted;
+}
+
+.input-field {
+  height: 48px;
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  padding: 0 $space-3;
+  font-size: 15px;
+  color: $clay;
+  background: $surface;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: $font-body;
+
+  &:focus {
+    outline: none;
+    border-color: $mahogany;
+  }
+}
+
+// ─── Status toggle ────────────────────────────────────────────────────────────
+.toggle-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggle-btn {
+  border: none;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background $transition-fast, color $transition-fast;
+}
+
+.toggle-on  { background: rgba($status-ready, 0.15); color: $status-ready; }
+.toggle-off { background: rgba($muted, 0.12); color: $muted; }
+
+// ─── Buttons ──────────────────────────────────────────────────────────────────
+.btn-primary {
+  height: 48px;
+  background: $mahogany;
+  color: $surface;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  transition: opacity $transition-fast;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover:not(:disabled) { opacity: 0.88; }
+}
+
+.btn-close-panel {
+  height: 48px;
+  background: $linen;
+  color: $clay;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: $space-2 $space-2 0;
+  transition: background $transition-fast;
+
+  &:hover { background: $border; }
+}
+
+// ─── Manager card ─────────────────────────────────────────────────────────────
+.current-manager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba($amber, 0.08);
+  border-radius: $radius-sm;
+  padding: $space-3 $space-4;
+  margin-bottom: $space-3;
+  border: 1.5px solid rgba($amber, 0.2);
+}
+
+.manager-info {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.manager-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba($amber, 0.2);
+  color: $amber;
+  font-family: $font-display;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.manager-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: $clay;
+}
+
+.manager-phone {
+  font-size: 13px;
+  color: $muted;
+  direction: ltr;
+  text-align: right;
+}
+
+.btn-remove-manager {
+  background: rgba($status-cancelled, 0.1);
+  color: $status-cancelled;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background $transition-fast;
+  flex-shrink: 0;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover:not(:disabled) { background: rgba($status-cancelled, 0.18); }
+}
+
+// ─── Assign manager row ───────────────────────────────────────────────────────
+.assign-row {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.assign-controls {
+  display: flex;
+  gap: $space-2;
+
+  .input-field { flex: 1; }
+}
+
+.btn-assign {
+  height: 48px;
+  padding: 0 $space-4;
+  background: $mahogany;
+  color: $surface;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  transition: opacity $transition-fast;
+  flex-shrink: 0;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover:not(:disabled) { opacity: 0.88; }
+}

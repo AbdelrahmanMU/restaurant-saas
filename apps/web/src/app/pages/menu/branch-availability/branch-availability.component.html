@@ -1,0 +1,121 @@
+<div class="page-shell">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <button class="btn-icon" (click)="auth.goToDashboard()" aria-label="رجوع">&#8594;</button>
+    <h1 class="topbar-title">توفر الفرع</h1>
+    <div class="topbar-spacer"></div>
+  </header>
+
+  <!-- Branch selector (Owner / RestaurantManager) -->
+  <div class="branch-bar" *ngIf="isOwnerOrManager">
+    <label class="branch-bar-label">الفرع</label>
+    <select
+      class="branch-select"
+      [(ngModel)]="selectedBranchId"
+      (change)="onBranchChange()"
+      [disabled]="branchesLoading">
+      <option value="" disabled>اختر الفرع…</option>
+      <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
+    </select>
+  </div>
+
+  <main class="page-content">
+
+    <!-- Loading -->
+    <div class="state-box" *ngIf="loading">
+      <span class="spinner"></span>
+      <span>جارٍ التحميل…</span>
+    </div>
+
+    <!-- Error -->
+    <div class="error-box" *ngIf="error && !loading">{{ error }}</div>
+
+    <!-- Availability list -->
+    <ng-container *ngIf="!loading && !error">
+
+      <div class="availability-list" *ngIf="filteredItems.length > 0; else emptyState">
+        <div class="avail-row" *ngFor="let item of filteredItems">
+
+          <!-- Product / variant info -->
+          <div class="avail-info">
+            <div class="product-variant-info">
+              <span class="product-name-text">{{ item.productName }}</span>
+              <span class="variant-sep"> — </span>
+              <span class="variant-name-text">{{ item.variantName }}</span>
+            </div>
+            <div class="avail-prices">
+              <span class="base-price">{{ item.basePrice | number:'1.2-2' }} ر.س</span>
+              <span class="override-price" *ngIf="item.priceOverride !== null">
+                {{ item.priceOverride | number:'1.2-2' }} ر.س (فرع)
+              </span>
+            </div>
+          </div>
+
+          <!-- Status + action (view mode) -->
+          <ng-container *ngIf="editingId !== item.productVariantId">
+            <span
+              class="avail-status"
+              [class.avail-status-on]="item.isAvailable"
+              [class.avail-status-off]="!item.isAvailable">
+              {{ item.isAvailable ? 'متاح' : 'غير متاح' }}
+            </span>
+            <button class="btn-edit" (click)="startEdit(item)">تعديل</button>
+          </ng-container>
+
+          <!-- Inline edit form -->
+          <div class="edit-form" *ngIf="editingId === item.productVariantId" (click)="$event.stopPropagation()">
+
+            <!-- Availability toggle -->
+            <div class="edit-toggle-row">
+              <span class="edit-label">الحالة</span>
+              <button
+                class="toggle-btn"
+                [class.toggle-on]="editIsAvailable"
+                [class.toggle-off]="!editIsAvailable"
+                (click)="editIsAvailable = !editIsAvailable"
+                type="button">
+                {{ editIsAvailable ? 'متاح' : 'غير متاح' }}
+              </button>
+            </div>
+
+            <!-- Price override -->
+            <div class="edit-field-group">
+              <label class="edit-label">سعر خاص بالفرع</label>
+              <input
+                class="edit-input"
+                type="number"
+                [(ngModel)]="editPriceOverride"
+                placeholder="اختياري"
+                min="0"
+                step="0.01" />
+            </div>
+
+            <div class="error-box small-error" *ngIf="editError">{{ editError }}</div>
+
+            <!-- Action buttons -->
+            <div class="edit-actions">
+              <button
+                class="btn-save"
+                (click)="saveEdit(item)"
+                [disabled]="editLoading">
+                <span class="mini-spinner" *ngIf="editLoading"></span>
+                <span *ngIf="!editLoading">حفظ</span>
+              </button>
+              <button class="btn-cancel" (click)="cancelEdit()" [disabled]="editLoading">إلغاء</button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <ng-template #emptyState>
+        <p class="empty-note">لا توجد منتجات لهذا الفرع</p>
+      </ng-template>
+
+    </ng-container>
+
+  </main>
+
+</div>

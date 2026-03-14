@@ -1,0 +1,145 @@
+<div class="page-shell">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <button class="btn-icon" (click)="router.navigate(['/menu'])" aria-label="رجوع">&#8594;</button>
+    <h1 class="topbar-title">المنتجات</h1>
+    <button class="btn-new" (click)="openCreatePanel()">+ منتج جديد</button>
+  </header>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <select class="filter-select" [(ngModel)]="filterType">
+      <option value="">كل الأنواع</option>
+      <option *ngFor="let t of productTypes" [value]="t.value">{{ t.label }}</option>
+    </select>
+    <select class="filter-select" [(ngModel)]="filterSection">
+      <option value="">كل الأقسام</option>
+      <option *ngFor="let s of sections" [value]="s.id">{{ s.name }}</option>
+    </select>
+  </div>
+
+  <main class="page-content">
+
+    <!-- Loading -->
+    <div class="state-box" *ngIf="loading">
+      <span class="spinner"></span>
+      <span>جارٍ التحميل…</span>
+    </div>
+
+    <!-- Error -->
+    <div class="error-box" *ngIf="error && !loading">{{ error }}</div>
+
+    <!-- Products list -->
+    <ng-container *ngIf="!loading && !error">
+
+      <div class="products-list" *ngIf="filteredProducts.length > 0; else emptyState">
+        <div
+          class="product-row"
+          [class.product-inactive]="!p.isActive"
+          *ngFor="let p of filteredProducts"
+          (click)="openProduct(p.id)">
+
+          <div class="product-main">
+            <div class="product-top">
+              <span class="product-name">{{ p.name }}</span>
+              <span class="type-chip" [ngClass]="typeClass(p.type)">{{ typeLabel(p.type) }}</span>
+            </div>
+            <span class="product-section" *ngIf="p.menuSectionName">{{ p.menuSectionName }}</span>
+          </div>
+
+          <div class="product-meta">
+            <span class="product-price">
+              {{ p.basePrice !== null ? (p.basePrice | number:'1.2-2') + ' ر.س' : 'لا توجد أسعار' }}
+            </span>
+            <span class="variant-count" *ngIf="p.variantCount > 0">{{ p.variantCount }} متغيّر</span>
+            <span class="active-dot" *ngIf="p.isActive"></span>
+          </div>
+
+          <span class="chevron">&#8592;</span>
+        </div>
+      </div>
+
+      <ng-template #emptyState>
+        <p class="empty-note">لا توجد منتجات</p>
+      </ng-template>
+
+    </ng-container>
+
+  </main>
+
+  <!-- ── Panel overlay ──────────────────────────────────────────────────────── -->
+  <div class="panel-overlay" *ngIf="createPanelOpen" (click)="closeCreatePanel()"></div>
+
+  <!-- ── Create slide-up panel ─────────────────────────────────────────────── -->
+  <div class="detail-panel" *ngIf="createPanelOpen">
+    <div class="panel-handle"></div>
+
+    <div class="panel-title-row" (click)="$event.stopPropagation()">
+      <h2 class="panel-title">منتج جديد</h2>
+    </div>
+
+    <section class="panel-section" (click)="$event.stopPropagation()">
+      <div class="form-stack">
+
+        <!-- Branch selector (Owner/Manager) -->
+        <div class="field-group" *ngIf="isOwnerOrManager">
+          <label class="field-label">الفرع *</label>
+          <select class="input-field" [(ngModel)]="formBranchId" [disabled]="branchesLoading">
+            <option value="" disabled>اختر الفرع…</option>
+            <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
+          </select>
+        </div>
+
+        <!-- Product type -->
+        <div class="field-group">
+          <label class="field-label">نوع المنتج *</label>
+          <select class="input-field" [(ngModel)]="formType">
+            <option *ngFor="let t of productTypes" [value]="t.value">{{ t.label }}</option>
+          </select>
+        </div>
+
+        <!-- Name -->
+        <div class="field-group">
+          <label class="field-label">اسم المنتج *</label>
+          <input class="input-field" type="text" [(ngModel)]="formName" placeholder="مثال: برجر كلاسيك" />
+        </div>
+
+        <!-- Menu section -->
+        <div class="field-group">
+          <label class="field-label">قسم القائمة</label>
+          <select class="input-field" [(ngModel)]="formMenuSectionId" [disabled]="sectionsLoading">
+            <option value="">بدون قسم</option>
+            <option *ngFor="let s of sections" [value]="s.id">{{ s.name }}</option>
+          </select>
+        </div>
+
+        <!-- Description -->
+        <div class="field-group">
+          <label class="field-label">الوصف</label>
+          <input class="input-field" type="text" [(ngModel)]="formDescription" placeholder="اختياري" />
+        </div>
+
+        <!-- Sort order -->
+        <div class="field-group">
+          <label class="field-label">ترتيب العرض</label>
+          <input class="input-field" type="number" [(ngModel)]="formSortOrder" min="0" />
+        </div>
+
+        <div class="error-box small-error" *ngIf="formError">{{ formError }}</div>
+
+        <button
+          class="btn-primary"
+          (click)="createProduct()"
+          [disabled]="formLoading || !formName.trim()">
+          <span class="mini-spinner" *ngIf="formLoading"></span>
+          <span *ngIf="!formLoading">إنشاء المنتج</span>
+        </button>
+
+      </div>
+    </section>
+
+    <button class="btn-close-panel" (click)="closeCreatePanel()">إغلاق</button>
+  </div>
+
+</div>

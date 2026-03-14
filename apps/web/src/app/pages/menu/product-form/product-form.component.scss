@@ -1,0 +1,934 @@
+@use '../../../shared/styles/tokens' as *;
+
+// ─── Shell ─────────────────────────────────────────────────────────────────────
+.page-shell {
+  min-height: 100dvh;
+  background: $linen;
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+}
+
+// ─── Topbar ────────────────────────────────────────────────────────────────────
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-4;
+  background: $surface;
+  border-bottom: 1.5px solid $border;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar-title {
+  font-family: $font-display;
+  font-size: 18px;
+  font-weight: 600;
+  color: $clay;
+  flex: 1;
+  text-align: center;
+}
+
+.topbar-spacer {
+  width: 40px;
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: $linen;
+  border: none;
+  font-size: 18px;
+  color: $mahogany;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background $transition-fast;
+
+  &:hover { background: $border; }
+}
+
+// ─── Content ───────────────────────────────────────────────────────────────────
+.page-content {
+  flex: 1;
+  padding: $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+// ─── State ─────────────────────────────────────────────────────────────────────
+.state-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  padding: $space-8;
+  color: $muted;
+  font-size: 15px;
+}
+
+.error-box {
+  background: rgba($status-cancelled, 0.08);
+  color: $status-cancelled;
+  border-radius: $radius-sm;
+  padding: $space-3 $space-4;
+  font-size: 14px;
+}
+
+.page-error {
+  margin: $space-4;
+}
+
+.small-error {
+  margin-top: $space-2;
+  padding: $space-2 $space-3;
+  font-size: 13px;
+}
+
+.empty-note {
+  text-align: center;
+  color: $muted;
+  font-size: 15px;
+  padding: $space-6 $space-4;
+}
+
+// ─── Spinners ──────────────────────────────────────────────────────────────────
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba($mahogany, 0.15);
+  border-top-color: $mahogany;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.65s linear infinite;
+}
+
+.mini-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba($surface, 0.4);
+  border-top-color: $surface;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.65s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ─── Tab bar ───────────────────────────────────────────────────────────────────
+.tab-bar {
+  display: flex;
+  overflow-x: auto;
+  background: $surface;
+  border-bottom: 1.5px solid $border;
+  padding: 0 $space-4;
+  gap: 0;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.tab {
+  flex-shrink: 0;
+  padding: $space-3 $space-4;
+  font-size: 14px;
+  font-weight: 600;
+  color: $muted;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: color $transition-fast, border-color $transition-fast;
+  font-family: $font-body;
+
+  &:hover { color: $clay; }
+}
+
+.tab-active {
+  color: $mahogany;
+  border-bottom-color: $mahogany;
+}
+
+// ─── Form card (general tab) ───────────────────────────────────────────────────
+.form-card {
+  background: $surface;
+  border-radius: $radius-card;
+  border: 1.5px solid $border;
+  padding: $space-5;
+  margin-bottom: $space-4;
+}
+
+.textarea {
+  height: auto;
+  padding: $space-3;
+  resize: vertical;
+}
+
+.type-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.type-badge {
+  font-size: 13px;
+  font-weight: 600;
+  color: $mahogany;
+  background: rgba($mahogany, 0.08);
+  border-radius: 20px;
+  padding: 4px 12px;
+}
+
+.success-box {
+  background: rgba($status-ready, 0.1);
+  color: $status-ready;
+  border-radius: $radius-sm;
+  padding: $space-2 $space-3;
+  font-size: 14px;
+}
+
+// ─── Form elements ─────────────────────────────────────────────────────────────
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $muted;
+}
+
+.input-field {
+  height: 48px;
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  padding: 0 $space-3;
+  font-size: 15px;
+  color: $clay;
+  background: $surface;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: $font-body;
+  transition: border-color $transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: $mahogany;
+  }
+
+  &:disabled { opacity: 0.5; }
+}
+
+.toggle-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggle-btn {
+  height: 36px;
+  min-width: 80px;
+  border-radius: 20px;
+  border: 1.5px solid $border;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition-fast;
+  font-family: $font-body;
+}
+
+.toggle-on {
+  background: rgba($status-ready, 0.1);
+  color: $status-ready;
+  border-color: rgba($status-ready, 0.3);
+}
+
+.toggle-off {
+  background: $linen;
+  color: $muted;
+}
+
+// ─── Buttons ───────────────────────────────────────────────────────────────────
+.btn-primary {
+  height: 48px;
+  background: $mahogany;
+  color: $surface;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  transition: opacity $transition-fast;
+  font-family: $font-body;
+  width: 100%;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover:not(:disabled) { opacity: 0.88; }
+}
+
+.btn-close-panel {
+  height: 48px;
+  background: $linen;
+  color: $clay;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: $space-2 $space-2 0;
+  transition: background $transition-fast;
+  font-family: $font-body;
+
+  &:hover { background: $border; }
+}
+
+// ─── Tab header ────────────────────────────────────────────────────────────────
+.tab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-3 0;
+}
+
+.tab-section-title {
+  font-family: $font-display;
+  font-size: 16px;
+  font-weight: 700;
+  color: $clay;
+  margin: 0;
+}
+
+.btn-new-sm {
+  background: $mahogany;
+  color: $surface;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: $font-body;
+  transition: opacity $transition-fast;
+
+  &:hover { opacity: 0.88; }
+}
+
+// ─── Variants list ─────────────────────────────────────────────────────────────
+.variants-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  margin-bottom: $space-4;
+}
+
+.variant-row {
+  background: $surface;
+  border-radius: $radius-card;
+  border: 1.5px solid $border;
+  padding: $space-3 $space-4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.variant-inactive {
+  opacity: 0.55;
+}
+
+.variant-info {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex: 1;
+}
+
+.variant-name {
+  font-weight: 700;
+  color: $clay;
+}
+
+.variant-sku {
+  font-size: 12px;
+  color: $muted;
+  font-family: monospace;
+}
+
+.default-badge {
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba($amber, 0.15);
+  color: $amber;
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+
+.variant-actions {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.variant-price {
+  font-family: $font-display;
+  font-size: 15px;
+  font-weight: 700;
+  color: $mahogany;
+}
+
+.btn-edit-sm {
+  background: $linen;
+  color: $clay;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: $font-body;
+  transition: background $transition-fast;
+
+  &:hover { background: $border; }
+}
+
+// ─── Slide-up panel ────────────────────────────────────────────────────────────
+.panel-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 40;
+}
+
+.detail-panel {
+  position: fixed;
+  bottom: 0;
+  inset-inline: 0;
+  background: $surface;
+  border-radius: 24px 24px 0 0;
+  z-index: 50;
+  padding: $space-4 $space-4 calc($space-6 + env(safe-area-inset-bottom));
+  max-height: 90dvh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  animation: slide-up 0.22s ease-out;
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.panel-handle {
+  width: 40px;
+  height: 4px;
+  background: $border;
+  border-radius: 2px;
+  margin: 0 auto $space-2;
+}
+
+.panel-title-row {
+  padding: 0 $space-2 $space-2;
+}
+
+.panel-title {
+  font-family: $font-display;
+  font-size: 18px;
+  font-weight: 700;
+  color: $clay;
+  margin: 0;
+}
+
+.panel-section {
+  padding: $space-4 $space-2;
+  border-top: 1.5px solid $border;
+}
+
+// ─── Modifier layout ───────────────────────────────────────────────────────────
+.modifiers-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: $space-4;
+  min-height: 300px;
+  align-items: start;
+}
+
+.variant-selector {
+  background: $surface;
+  border-radius: $radius-card;
+  border: 1.5px solid $border;
+  padding: $space-3;
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.selector-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: $muted;
+  margin: 0 0 $space-2;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.selector-btn {
+  background: none;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  padding: $space-2 $space-3;
+  text-align: right;
+  font-size: 14px;
+  color: $clay;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all $transition-fast;
+  font-family: $font-body;
+
+  &:hover { border-color: $border; }
+}
+
+.selector-active {
+  border-color: $mahogany !important;
+  background: rgba($mahogany, 0.06);
+  color: $mahogany;
+  font-weight: 600;
+}
+
+.mod-count {
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba($mahogany, 0.1);
+  color: $mahogany;
+  border-radius: 20px;
+  padding: 1px 7px;
+}
+
+.modifier-panel {
+  background: $surface;
+  border-radius: $radius-card;
+  border: 1.5px solid $border;
+  padding: $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.modifier-panel-empty {
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.muted-hint {
+  color: $muted;
+  font-size: 14px;
+}
+
+.mod-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.linked-groups {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.linked-group-row {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-3;
+  background: $linen;
+  border-radius: 8px;
+}
+
+.linked-group-info {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.linked-group-name {
+  font-weight: 600;
+  color: $clay;
+  font-size: 14px;
+}
+
+.sel-chip {
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(59, 130, 246, 0.12);
+  color: #3B82F6;
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+
+.req-chip {
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba($status-cancelled, 0.1);
+  color: $status-cancelled;
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+
+.opt-count {
+  font-size: 12px;
+  color: $muted;
+}
+
+.btn-unlink {
+  background: none;
+  border: 1.5px solid rgba($status-cancelled, 0.3);
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 12px;
+  color: $status-cancelled;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: $font-body;
+  transition: background $transition-fast;
+
+  &:hover { background: rgba($status-cancelled, 0.08); }
+}
+
+.link-row {
+  display: flex;
+  gap: $space-2;
+  align-items: center;
+
+  .input-field { flex: 1; }
+}
+
+.btn-link {
+  height: 48px;
+  padding: 0 $space-4;
+  background: $mahogany;
+  color: $surface;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: $font-body;
+  transition: opacity $transition-fast;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover:not(:disabled) { opacity: 0.88; }
+}
+
+.selector-empty {
+  color: $muted;
+  font-size: 13px;
+  padding: $space-2;
+}
+
+// ─── Bundle / Slots ────────────────────────────────────────────────────────────
+.slots-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  margin-bottom: $space-4;
+}
+
+.slot-card {
+  background: $surface;
+  border-radius: $radius-card;
+  border: 1.5px solid $border;
+  padding: $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.slot-header {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+.slot-name {
+  font-family: $font-display;
+  font-size: 15px;
+  font-weight: 700;
+  color: $clay;
+  flex: 1;
+}
+
+.slot-badges {
+  display: flex;
+  gap: $space-1;
+  align-items: center;
+}
+
+.slot-badge-required {
+  font-size: 11px;
+  background: rgba($status-cancelled, 0.1);
+  color: $status-cancelled;
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-weight: 600;
+}
+
+.slot-badge-optional {
+  font-size: 11px;
+  background: rgba($muted, 0.1);
+  color: $muted;
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-weight: 600;
+}
+
+.slot-range {
+  font-size: 12px;
+  color: $muted;
+}
+
+.slot-actions {
+  display: flex;
+  gap: $space-1;
+}
+
+.btn-remove-sm {
+  background: none;
+  border: 1.5px solid rgba($status-cancelled, 0.3);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: $status-cancelled;
+  cursor: pointer;
+  font-family: $font-body;
+  transition: background $transition-fast;
+
+  &:hover { background: rgba($status-cancelled, 0.08); }
+}
+
+.slot-choices {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  padding: $space-2 0;
+  border-top: 1px solid $border;
+}
+
+.choice-row {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-1 0;
+}
+
+.choice-name {
+  flex: 1;
+  font-size: 14px;
+  color: $clay;
+}
+
+.choice-price {
+  font-size: 13px;
+  color: $mahogany;
+  font-weight: 600;
+}
+
+.btn-remove-choice {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: $muted;
+  cursor: pointer;
+  padding: 0 $space-1;
+  transition: color $transition-fast;
+
+  &:hover { color: $status-cancelled; }
+}
+
+.add-choice-row {
+  display: flex;
+  gap: $space-2;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .input-field {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+.input-delta {
+  max-width: 120px;
+  flex: none !important;
+}
+
+.btn-cancel-sm {
+  background: $linen;
+  color: $clay;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: $font-body;
+  transition: background $transition-fast;
+
+  &:hover { background: $border; }
+}
+
+.btn-add-choice {
+  background: none;
+  border: 1.5px dashed $border;
+  border-radius: 8px;
+  padding: $space-2 $space-3;
+  font-size: 13px;
+  color: $muted;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  transition: all $transition-fast;
+  font-family: $font-body;
+  box-sizing: border-box;
+
+  &:hover {
+    border-color: $mahogany;
+    color: $mahogany;
+  }
+}
+
+// ─── Availability ──────────────────────────────────────────────────────────────
+.branch-sel {
+  max-width: 280px;
+}
+
+.avail-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.avail-row {
+  background: $surface;
+  border-radius: $radius-card;
+  border: 1.5px solid $border;
+  padding: $space-3 $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.avail-info {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.avail-right {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  justify-content: flex-end;
+}
+
+.avail-variant-name {
+  font-weight: 700;
+  color: $clay;
+}
+
+.avail-base-price {
+  font-size: 13px;
+  color: $muted;
+}
+
+.override-badge {
+  font-size: 12px;
+  background: rgba($mahogany, 0.1);
+  color: $mahogany;
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-weight: 600;
+}
+
+.avail-status {
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+
+.avail-on {
+  background: rgba($status-ready, 0.12);
+  color: $status-ready;
+}
+
+.avail-off {
+  background: rgba($muted, 0.12);
+  color: $muted;
+}
+
+.avail-edit-form {
+  padding: $space-2 0;
+  border-top: 1px solid $border;
+}
+
+.avail-edit-row {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+.input-override {
+  max-width: 160px;
+  flex: none;
+}
+
+.btn-save-avail {
+  height: 48px;
+  padding: 0 $space-3;
+  background: $mahogany;
+  color: $surface;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: $font-body;
+  transition: opacity $transition-fast;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover:not(:disabled) { opacity: 0.88; }
+}

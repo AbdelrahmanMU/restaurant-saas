@@ -17,13 +17,29 @@
     </div>
   </section>
 
-  <!-- ── Owner / RestaurantManager: manage users ───────────── -->
+  <!-- ── Owner / RestaurantManager: manage users & branches ── -->
   <section class="section" *ngIf="canManageUsers">
     <button class="btn-manage-users" (click)="manageUsers()">
       <span class="btn-manage-icon">👥</span>
       <span class="btn-manage-text">
         <span class="btn-manage-label">إدارة الموظفين والأدوار</span>
         <span class="btn-manage-sub">عرض وتعديل أدوار الموظفين</span>
+      </span>
+      <span class="btn-manage-arrow">&#8592;</span>
+    </button>
+    <button class="btn-manage-users" (click)="manageBranches()" *ngIf="isOwner">
+      <span class="btn-manage-icon">🏪</span>
+      <span class="btn-manage-text">
+        <span class="btn-manage-label">إدارة الفروع</span>
+        <span class="btn-manage-sub">إنشاء الفروع وتعيين المدراء</span>
+      </span>
+      <span class="btn-manage-arrow">&#8592;</span>
+    </button>
+    <button class="btn-manage-users" (click)="manageMenu()">
+      <span class="btn-manage-icon">🍽️</span>
+      <span class="btn-manage-text">
+        <span class="btn-manage-label">إدارة القائمة</span>
+        <span class="btn-manage-sub">الأقسام والمنتجات والمجموعات والحزم</span>
       </span>
       <span class="btn-manage-arrow">&#8592;</span>
     </button>

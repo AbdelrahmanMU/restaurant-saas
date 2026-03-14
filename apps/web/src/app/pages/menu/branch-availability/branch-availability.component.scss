@@ -1,0 +1,362 @@
+@use '../../../shared/styles/tokens' as *;
+
+// ─── Shell ────────────────────────────────────────────────────────────────────
+.page-shell {
+  min-height: 100dvh;
+  background: $linen;
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+}
+
+// ─── Topbar ───────────────────────────────────────────────────────────────────
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-4;
+  background: $surface;
+  border-bottom: 1.5px solid $border;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar-title {
+  font-family: $font-display;
+  font-size: 18px;
+  font-weight: 600;
+  color: $clay;
+  flex: 1;
+  text-align: center;
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: $linen;
+  border: none;
+  font-size: 18px;
+  color: $mahogany;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.topbar-spacer {
+  width: 40px;
+  flex-shrink: 0;
+}
+
+// ─── Branch bar ───────────────────────────────────────────────────────────────
+.branch-bar {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  background: $surface;
+  border-bottom: 1.5px solid $border;
+}
+
+.branch-bar-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $muted;
+  flex-shrink: 0;
+}
+
+.branch-select {
+  flex: 1;
+  height: 40px;
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  padding: 0 $space-3;
+  font-size: 14px;
+  color: $clay;
+  background: $surface;
+  box-sizing: border-box;
+  font-family: $font-body;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: $mahogany;
+  }
+
+  &:disabled { opacity: 0.5; }
+}
+
+// ─── Content ──────────────────────────────────────────────────────────────────
+.page-content {
+  flex: 1;
+  padding: $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+// ─── State ────────────────────────────────────────────────────────────────────
+.state-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  padding: $space-8;
+  color: $muted;
+  font-size: 15px;
+}
+
+.error-box {
+  background: rgba($status-cancelled, 0.08);
+  color: $status-cancelled;
+  border-radius: $radius-sm;
+  padding: $space-3 $space-4;
+  font-size: 14px;
+}
+
+.small-error { margin-top: $space-2; }
+
+.empty-note {
+  text-align: center;
+  color: $muted;
+  font-size: 15px;
+  padding: $space-6 $space-4;
+}
+
+// ─── Spinner ──────────────────────────────────────────────────────────────────
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba($mahogany, 0.15);
+  border-top-color: $mahogany;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.65s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.mini-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba($surface, 0.4);
+  border-top-color: $surface;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.65s linear infinite;
+}
+
+// ─── Availability list ────────────────────────────────────────────────────────
+.availability-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.avail-row {
+  background: $surface;
+  border-radius: $radius-card;
+  padding: $space-4;
+  border: 1.5px solid $border;
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  flex-wrap: wrap;
+  transition: border-color $transition-fast;
+}
+
+// ─── Product / variant info ───────────────────────────────────────────────────
+.avail-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.product-variant-info {
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.product-name-text {
+  font-family: $font-display;
+  font-weight: 700;
+  color: $clay;
+}
+
+.variant-sep {
+  color: $muted;
+  margin: 0 2px;
+}
+
+.variant-name-text {
+  color: $muted;
+  font-size: 14px;
+}
+
+.avail-prices {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.base-price {
+  font-size: 14px;
+  color: $muted;
+}
+
+.override-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: $mahogany;
+}
+
+// ─── Status badge ─────────────────────────────────────────────────────────────
+.avail-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.avail-status-on {
+  background: rgba($status-ready, 0.12);
+  color: $status-ready;
+}
+
+.avail-status-off {
+  background: rgba($status-cancelled, 0.1);
+  color: $status-cancelled;
+}
+
+// ─── Edit button ──────────────────────────────────────────────────────────────
+.btn-edit {
+  height: 36px;
+  padding: 0 $space-3;
+  background: $linen;
+  color: $clay;
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background $transition-fast, border-color $transition-fast;
+
+  &:hover { background: $border; border-color: $mahogany; }
+}
+
+// ─── Inline edit form ─────────────────────────────────────────────────────────
+.edit-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding-top: $space-3;
+  border-top: 1.5px solid $border;
+  margin-top: $space-1;
+}
+
+.edit-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+.edit-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.edit-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $muted;
+}
+
+.edit-input {
+  height: 44px;
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  padding: 0 $space-3;
+  font-size: 15px;
+  color: $clay;
+  background: $surface;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: $font-body;
+
+  &:focus {
+    outline: none;
+    border-color: $mahogany;
+  }
+}
+
+// ─── Toggle button ────────────────────────────────────────────────────────────
+.toggle-btn {
+  border: none;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background $transition-fast, color $transition-fast;
+}
+
+.toggle-on  { background: rgba($status-ready, 0.15); color: $status-ready; }
+.toggle-off { background: rgba($muted, 0.12); color: $muted; }
+
+// ─── Edit actions ─────────────────────────────────────────────────────────────
+.edit-actions {
+  display: flex;
+  gap: $space-2;
+}
+
+.btn-save {
+  height: 40px;
+  flex: 1;
+  background: $mahogany;
+  color: $surface;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  transition: opacity $transition-fast;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover:not(:disabled) { opacity: 0.88; }
+}
+
+.btn-cancel {
+  height: 40px;
+  padding: 0 $space-4;
+  background: $linen;
+  color: $clay;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover:not(:disabled) { background: $border; }
+}
