@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: restaurant-saas-api
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    # Free plan: 512 MB RAM, spins down after inactivity
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      # Set these in the Render dashboard (not here — keep secrets out of source control)
+      - key: ConnectionStrings__Default
+        sync: false
+      - key: Jwt__Key
+        sync: false
+      - key: Jwt__Issuer
+        value: restaurant-saas
+      - key: Jwt__Audience
+        value: restaurant-saas-clients
+      - key: Frontend__BaseUrl
+        sync: false
+      - key: PORT
+        value: "10000"

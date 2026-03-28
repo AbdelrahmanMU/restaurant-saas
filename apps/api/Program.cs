@@ -78,12 +78,18 @@ builder.Services.AddScoped<IModifierGroupService, ModifierGroupService>();
 builder.Services.AddScoped<IBundleService, BundleService>();
 builder.Services.AddScoped<IBranchAvailabilityService, BranchAvailabilityService>();
 
-// CORS (allow Angular dev server)
+// CORS — reads Frontend:BaseUrl from config (env var: Frontend__BaseUrl)
+var allowedOrigin = builder.Configuration["Frontend:BaseUrl"] ?? "http://localhost:4200";
 builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(allowedOrigin)
               .AllowAnyHeader()
               .AllowAnyMethod()));
+
+// Bind to PORT env var injected by Render (falls back to launchSettings on dev)
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(port))
+    builder.WebHost.UseUrls($"http://+:{port}");
 
 var app = builder.Build();
 

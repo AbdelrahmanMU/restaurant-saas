@@ -126,3 +126,4 @@ C:\Users\Boda\AppData\Local\Temp\api-build\RestaurantSaas.Api.deps.json
 C:\Users\Boda\AppData\Local\Temp\api-build\RestaurantSaas.Api.runtimeconfig.json
 C:\Users\Boda\AppData\Local\Temp\api-build\RestaurantSaas.Api.dll
 C:\Users\Boda\AppData\Local\Temp\api-build\RestaurantSaas.Api.pdb
+D:\Projects\restaurant-saas\apps\api\bin\Debug\net8.0\appsettings.Production.json
